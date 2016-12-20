@@ -34,8 +34,6 @@ namespace ShadowBlue.LogFarm.Domain
         {
             base.InitializeTarget();
 
-            InternalLogger.Debug("Amazon Instance Id", EC2Metadata.InstanceId);
-
             var regionConfig = WebConfigurationManager.AppSettings["AWSRegion"] ??
                                "ap-southeast-2";
 
@@ -81,11 +79,6 @@ namespace ShadowBlue.LogFarm.Domain
                 .ToList();
 
             _client.AddLogRequest(logRequest);
-        }
-
-        public void TestWrite(LogEventInfo logEvent)
-        {
-            Write(logEvent);
         }
     }
 }
