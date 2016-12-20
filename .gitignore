@@ -1,0 +1,9 @@
+
+/src/CiArtefact/*.nupkg
+/src/CiArtefact
+/src/CiOutput
+/src/*.nupkg
+/src/ShadowBlue.LogFarm.Domain/obj/Debug
+/src/ShadowBlue.LogFarm.Mvc/obj/Debug
+/src/packages/*
+/src/ShadowBlue.LogFarm.Mvc/bin
