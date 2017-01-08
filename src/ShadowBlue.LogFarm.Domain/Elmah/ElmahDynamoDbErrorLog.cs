@@ -19,11 +19,12 @@ namespace ShadowBlue.LogFarm.Domain.Elmah
     public class DynamoDbErrorLog : ErrorLog
     {
         private static readonly Dictionary<string, string> Keys = new Dictionary<string, string>();
+        private static readonly DateTime UnixEpoch = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
         private readonly IRepository<ElmahError> _repository;
-        private const int MaxAppNameLength = 60;
         private readonly string _applicationName;
-        public static readonly DateTime UnixEpoch = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
-        private readonly string[] _escapedChars = new[] {".", "."};
+        private readonly string[] _unwantedChars = {".", "."};
+        private const int MaxAppNameLength = 60;
+        
         /// <summary>        ///  Elmah by default ony accept this as constructor
         /// </summary>
         /// <param name="config"></param>
@@ -32,7 +33,6 @@ namespace ShadowBlue.LogFarm.Domain.Elmah
             if (config == null)
                 throw new ArgumentException("config is null");
 
-            //https://code.google.com/p/elmah/source/browse/src/Elmah/DictionaryExtensions.cs
             ApplicationName = (string)config["ddbAppName"] ?? string.Empty;
             Environment = (string)config["environment"] ?? string.Empty;
             var tableName = (string)config["ddbTableName"] ?? "elmah-table";
@@ -55,7 +55,8 @@ namespace ShadowBlue.LogFarm.Domain.Elmah
             _applicationName = applcationName;
 
             _repository = new DynamoDbRepository<ElmahError>(
-                applcationName, tableName);
+                applcationName, tableName
+                );
         }
 
         public override string Name
@@ -133,10 +134,14 @@ namespace ShadowBlue.LogFarm.Domain.Elmah
                     .OrderByDescending(a => a);
             }
 
-            var elmahErrors = items ?? new List<ElmahError>();
+            var elmahErrors = items == null ? 
+                items.ToList() : 
+                new List<ElmahError>();
+ 
             var count = elmahErrors.Count();
 
-            var elmahErrorLogs = elmahErrors.Take(pageSize)
+            var elmahErrorLogs = elmahErrors
+                .Take(pageSize)
                 .Select(ToError)
                 .OrderByDescending(x => x.Id)
                 .ToList();
@@ -181,7 +186,7 @@ namespace ShadowBlue.LogFarm.Domain.Elmah
             return new ErrorLogEntry(this, elmahError.DateTimeId, error);
         }
 
-        private static Dictionary<string, string> ToDictionary(NameValueCollection collection)
+        private Dictionary<string, string> ToDictionary(NameValueCollection collection)
         {
             Contract.Requires(collection != null);
             Contract.Ensures(Contract.Result<Dictionary<string, string>>() != null);
@@ -199,9 +204,10 @@ namespace ShadowBlue.LogFarm.Domain.Elmah
                 if (values == null)
                     continue;
 
-                queryStringKey.Trim(_)
+                var key = _unwantedChars.Aggregate(queryStringKey, 
+                    (current, wantedChar) => current.Replace(wantedChar, string.Empty));
 
-                queryStringDoc.Add(queryStringKey, string.Join(",", values));
+                queryStringDoc.Add(key, string.Join(",", values));
             }
             return queryStringDoc;
         }

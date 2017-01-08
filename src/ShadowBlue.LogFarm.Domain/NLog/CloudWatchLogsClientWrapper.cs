@@ -24,7 +24,7 @@ namespace ShadowBlue.LogFarm.Domain.NLog
 
         private readonly string _logGroup;
         private readonly string _logStream;
-
+        
         public CloudWatchLogsClientWrapper(IAmazonCloudWatchLogs client, string logGroup, string logStream)
         {
             _client = client;

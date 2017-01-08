@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Web.Configuration;
 using Amazon;
@@ -8,7 +7,7 @@ using Amazon.DynamoDBv2.DocumentModel;
 
 namespace ShadowBlue.Repository
 {
-    public class DynamoDbRepository<T> : IRepository<T> where T : class, IDisposable
+    public class DynamoDbRepository<T> : IRepository<T> where T : class
     {
         private readonly DynamoDBContext _ddbcontext;
         private readonly string _applicationName;
@@ -17,14 +16,16 @@ namespace ShadowBlue.Repository
 
         public DynamoDbRepository(string applicationName, string ddbTableName)
         {
-            Contract.Requires(!string.IsNullOrWhiteSpace(applicationName));
+            Contract.Requires(
+                    !string.IsNullOrWhiteSpace(applicationName) &&
+                    !string.IsNullOrEmpty(ddbTableName)
+                );
 
             _applicationName = applicationName;
             _ddbTableName = ddbTableName;
 
             var awskey = WebConfigurationManager.AppSettings["AWSAccessKey"] ?? string.Empty;
-            var awsSecret = WebConfigurationManager.AppSettings["AWSSecretKey"] ??
-                       string.Empty;
+            var awsSecret = WebConfigurationManager.AppSettings["AWSSecretKey"] ?? string.Empty;
 
             if (string.IsNullOrEmpty(awskey) || string.IsNullOrEmpty(awsSecret))
                 _ddbcontext = new DynamoDBContext(AWSClientFactory.CreateAmazonDynamoDBClient());

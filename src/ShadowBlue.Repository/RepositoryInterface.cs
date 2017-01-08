@@ -6,7 +6,7 @@ using Amazon.DynamoDBv2.DocumentModel;
 namespace ShadowBlue.Repository
 {
     [ContractClass(typeof(RepositoryInterface<>))]
-    public interface IRepository<T> where T : class, IDisposable
+    public interface IRepository<T> where T : class
     {
         void Add(T entity);
         void Delete(string id);

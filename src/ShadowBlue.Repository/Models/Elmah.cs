@@ -5,7 +5,7 @@ using Amazon.DynamoDBv2.DataModel;
 namespace ShadowBlue.Repository.Models
 {
     [DynamoDBTable("Elmah")]
-    public class ElmahError : IDisposable
+    public class ElmahError 
     {
         [DynamoDBHashKey]
         public string DateTimeId { get; set; }
@@ -25,10 +25,5 @@ namespace ShadowBlue.Repository.Models
         public Dictionary<string, string> Cookies { get; set; }
         public Dictionary<string, string> ServerVariables { get; set; }
         public Dictionary<string, string> Form { get; set; }
-
-        public void Dispose()
-        {
-            throw new NotImplementedException();
-        }
     }
 }
