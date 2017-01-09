@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>ShadowBlue.LogFarm.Mvc</id>
+    <version>1.0.0.0</version>
+    <authors>Sam Wang</authors>
+    <owners>Sam Wang</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>LogFarm</description>
+    <releaseNotes>LogFarm initial with Elmah and NLog working to AWS</releaseNotes>
+    <copyright>Copyright 2015</copyright>
+    <dependencies>
+        <dependency id="elmah" version="1.2.2" />
+        <dependency id="AWSSDK" version="2.3.55.0" />
+        <dependency id="WebActivatorEx" version="2.0" />
+        <dependency id="Common.Logging.NLog30" version="3.3.1" />
+        <dependency id="Nlog" version="(4.0.0, 4.3.1)" />
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="..\ShadowBlue.LogFarm.Mvc\bin\**\ShadowBlue.LogFarm.Mvc.dll" target="lib\net40\" />
+    <file src="..\ShadowBlue.LogFarm.Mvc\bin\**\ShadowBlue.LogFarm.Domain.dll" target="lib\net40\" />
+    <file src="..\ShadowBlue.LogFarm.Mvc\bin\**\ShadowBlue.LogFarm.Repository.dll" target="lib\net40\" />
+    <file src="mvc-content\*.transform" target="content" />
+    <file src="parameters.xml.install.xdt" target="content" />
+    <file src="parameters.xml.uninstall.xdt" target="content" />
+		<file src="aws\NLog.config" target="content" />
+		<file src="aws\NLog.params.config" target="content" /> 
+    <file src="WebDeploys\Site.SetParameters.Dev.config.transform" target="content\CiWebDeploy" />
+    <file src="WebDeploys\Site.SetParameters.Tests.config.transform" target="content\CiWebDeploy" />
+    <file src="WebDeploys\Site.SetParameters.Prod.config.transform" target="content\CiWebDeploy" />
+    <file src="WebDeploys\Site.SetParameters.Uat.config.transform" target="content\CiWebDeploy" />
+    <file src="WebDeploys\Site.SetParameters.Staging.config.transform" target="content\CiWebDeploy" />
+  </files>
+</package>

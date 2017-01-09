@@ -28,11 +28,12 @@ namespace ShadowBlue.LogFarm.Domain.Elmah
         /// <summary>        ///  Elmah by default ony accept this as constructor
         /// </summary>
         /// <param name="config"></param>
-        public DynamoDbErrorLog(IDictionary config)
+        public DynamoDbErrorLog(IDictionary config, IRepository<ElmahError> repository)
         {
             if (config == null)
                 throw new ArgumentException("config is null");
 
+            _repository = repository;
             ApplicationName = (string)config["ddbAppName"] ?? string.Empty;
             Environment = (string)config["environment"] ?? string.Empty;
             var tableName = (string)config["ddbTableName"] ?? "elmah-table";
@@ -54,9 +55,9 @@ namespace ShadowBlue.LogFarm.Domain.Elmah
             var applcationName = string.Format("{0}-{1}", ApplicationName, Environment);
             _applicationName = applcationName;
 
-            _repository = new DynamoDbRepository<ElmahError>(
-                applcationName, tableName
-                );
+            //_repository = new DynamoDbRepository<ElmahError>(
+            //    applcationName, tableName
+            //    );`
         }
 
         public override string Name

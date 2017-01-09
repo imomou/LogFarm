@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<parameters xmlns:xdt="http://schemas.microsoft.com/XML-Document-Transform">
+
+	<parameter name="Environment"
+		xdt:Transform="Remove"
+		xdt:Locator="Match(name)">
+		>
+	</parameter>
+	
+	<parameter name="NLoggerTarget"
+		xdt:Transform="Remove"
+		xdt:Locator="Match(name)">
+		>
+		<parameterEntry
+		/>
+	</parameter> 
+		
+	<parameter name="ApplicationName"
+		xdt:Transform="Remove"
+		xdt:Locator="Match(name)">
+		>
+	</parameter>
+	
+	<parameter name="LogGroup"
+		xdt:Transform="Remove"
+		xdt:Locator="Match(name)">
+		>
+	</parameter>
+	
+	<parameter name="ElmahTable"
+		xdt:Transform="Remove"
+		xdt:Locator="Match(name)">
+		>
+	</parameter>
+	
+	<parameter name="ServerRole"
+		xdt:Transform="Remove"
+		xdt:Locator="Match(name)">
+	</parameter>
+	
+</parameters>

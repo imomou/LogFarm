@@ -1,0 +1,83 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<parameters xmlns:xdt="http://schemas.microsoft.com/XML-Document-Transform">
+
+	<parameter 
+		name="Environment"
+		description=""
+		tags=""
+		xdt:Transform="Insert"
+		>
+		<parameterEntry
+			name="EnvironmentDdb"
+			kind="XmlFile"
+			scope="obj\\Release\\Package\\PackageTmp\\Web\.config$"
+			match="/configuration/elmah/errorLog[@type='PacDig.Forensic.Repository.DynamoDb.DynamoDbErrorLog, PacDig.Forensic.Repository']/@environment"
+		/>
+		<parameterEntry
+			name="EnvironmentDbLogger"
+			kind="XmlFile"
+			scope="obj\\Release\\Package\\PackageTmp\\NLog\.params\.config$"
+			match="/nlog/variable[@name='Environment']/@value"
+		/>
+	</parameter>
+	
+	<parameter 
+		name="NLoggerTarget"
+		description=""
+		tags=""
+		xdt:Transform="Insert"
+		>
+		<parameterEntry
+			kind="XmlFile"
+			scope="obj\\Release\\Package\\PackageTmp\\NLog\.config$"
+			match="/nlog/rules/logger[@name='*']/@writeTo" 
+		/>
+	</parameter> 
+		
+	<parameter 
+		name="ApplicationName"
+		description=""
+		tags=""
+		xdt:Transform="Insert"
+		>
+		<parameterEntry
+			name="AppDbb"
+			kind="XmlFile"
+			scope="obj\\Release\\Package\\PackageTmp\\Web\.config$"
+			match="/configuration/elmah/errorLog[@type='PacDig.Forensic.Repository.DynamoDb.DynamoDbErrorLog, PacDig.Forensic.Repository']/@ddbAppName" 
+		/>
+		<parameterEntry
+			name="AppLogger"
+			kind="XmlFile"
+			scope="obj\\Release\\Package\\PackageTmp\\NLog\.params\.config$"
+			match="/nlog/variable[@name='ApplicationName']/@value" 
+		/>
+	</parameter>
+	
+	<parameter 
+		name="LogGroup"
+		description=""
+		tags=""
+		xdt:Transform="Insert"
+		>
+		<parameterEntry
+			kind="XmlFile"
+			scope="obj\\Release\\Package\\PackageTmp\\NLog\.params\.config$"
+			match="/nlog/variable[@name='LogGroup']/@value"
+		/>
+	</parameter>
+	
+	<parameter 
+		name="ElmahTable"
+		description=""
+		tags=""
+		xdt:Transform="Insert"
+		>
+		<parameterEntry
+			kind="XmlFile"
+			scope="obj\\Release\\Package\\PackageTmp\\Web\.config$"
+			match="/configuration/elmah/errorLog[@type='PacDig.Forensic.Repository.DynamoDb.DynamoDbErrorLog, PacDig.Forensic.Repository']/@ddbTableName" 
+		/>
+	</parameter>
+
+</parameters>

@@ -1,0 +1,9 @@
+C:\Users\momo\Desktop\LogFarm\src\ShadowBlue.Repository\bin\Release\ShadowBlue.Repository.dll
+C:\Users\momo\Desktop\LogFarm\src\ShadowBlue.Repository\bin\Release\ShadowBlue.Repository.pdb
+C:\Users\momo\Desktop\LogFarm\src\ShadowBlue.Repository\bin\Release\ShadowBlue.Repository.dll.CodeAnalysisLog.xml
+C:\Users\momo\Desktop\LogFarm\src\ShadowBlue.Repository\bin\Release\ShadowBlue.Repository.dll.lastcodeanalysissucceeded
+C:\Users\momo\Desktop\LogFarm\src\ShadowBlue.Repository\bin\Release\AWSSDK.dll
+C:\Users\momo\Desktop\LogFarm\src\ShadowBlue.Repository\bin\Release\AWSSDK.pdb
+C:\Users\momo\Desktop\LogFarm\src\ShadowBlue.Repository\obj\Release\ShadowBlue.Repository.csprojResolveAssemblyReference.cache
+C:\Users\momo\Desktop\LogFarm\src\ShadowBlue.Repository\obj\Release\ShadowBlue.Repository.dll
+C:\Users\momo\Desktop\LogFarm\src\ShadowBlue.Repository\obj\Release\ShadowBlue.Repository.pdb
