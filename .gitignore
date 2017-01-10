@@ -1,10 +1,14 @@
-
+*.dll
+*.pdb
 /src/CiArtefact/*.nupkg
 /src/CiArtefact
 /src/CiOutput
 /src/*.nupkg
-/src/ShadowBlue.LogFarm.Domain/obj/Debug
-/src/ShadowBlue.LogFarm.Mvc/obj/Debug
+/*/Debug/*
+/*/Release/*
 /src/packages/*
 /src/ShadowBlue.LogFarm.Mvc/bin
 /src/*.suo
+/src/ShadowBlue.Domain.Test/bin/Release
+/src/ShadowBlue.LogFarm.Domain/obj/Debug
+/src/ShadowBlue.LogFarm.Mvc/obj/Debug
