@@ -27,7 +27,7 @@ namespace ShadowBlue.Repository
             var awskey = WebConfigurationManager.AppSettings["AWSAccessKey"] ?? string.Empty;
             var awsSecret = WebConfigurationManager.AppSettings["AWSSecretKey"] ?? string.Empty;
 
-            if (string.IsNullOrEmpty(awskey) || string.IsNullOrEmpty(awsSecret))
+            if (string.IsNullOrEmpty(awskey) && string.IsNullOrEmpty(awsSecret))
                 _ddbcontext = new DynamoDBContext(AWSClientFactory.CreateAmazonDynamoDBClient());
             else
                 _ddbcontext = new DynamoDBContext(AWSClientFactory.CreateAmazonDynamoDBClient(awskey, awsSecret));

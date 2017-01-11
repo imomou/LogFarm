@@ -19,26 +19,7 @@ namespace ShadowBlue.Domain.Test
         [Test]
         public void LogTest()
         {
-            var container = new AutoMoq.AutoMoqer();
-
-            var mock = container.Resolve<IRepository<ElmahError>>();
-
-            var target = container.Resolve<DynamoDbRepository<ElmahError>>();
-
-            var elmahError = new ElmahError
-            {
-                ApplicationName = "TestApplication",
-                Cookies = new Dictionary<string, string>
-                {
-                    {
-                        "TestKeyCookie", "TestKeyValue"
-                    }
-                }
-            };
-
-            //target.Add();
-
-            //mock.Add
+       
         }
     }
 }
