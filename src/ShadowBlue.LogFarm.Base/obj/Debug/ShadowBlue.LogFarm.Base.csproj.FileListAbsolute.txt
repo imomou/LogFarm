@@ -1,0 +1,6 @@
+C:\Users\momo\Desktop\LogFarm\src\ShadowBlue.LogFarm.Base\bin\Debug\ShadowBlue.LogFarm.Base.dll.config
+C:\Users\momo\Desktop\LogFarm\src\ShadowBlue.LogFarm.Base\bin\Debug\ShadowBlue.LogFarm.Base.dll
+C:\Users\momo\Desktop\LogFarm\src\ShadowBlue.LogFarm.Base\bin\Debug\ShadowBlue.LogFarm.Base.pdb
+C:\Users\momo\Desktop\LogFarm\src\ShadowBlue.LogFarm.Base\obj\Debug\ShadowBlue.LogFarm.Base.csprojResolveAssemblyReference.cache
+C:\Users\momo\Desktop\LogFarm\src\ShadowBlue.LogFarm.Base\obj\Debug\ShadowBlue.LogFarm.Base.dll
+C:\Users\momo\Desktop\LogFarm\src\ShadowBlue.LogFarm.Base\obj\Debug\ShadowBlue.LogFarm.Base.pdb
