@@ -1,7 +1,0 @@
-C:\Users\momo\Desktop\LogFarm\src\ShadowBlue.LogFarm.Base\bin\Release\ShadowBlue.LogFarm.Base.dll.config
-C:\Users\momo\Desktop\LogFarm\src\ShadowBlue.LogFarm.Base\bin\Release\ShadowBlue.LogFarm.Base.dll
-C:\Users\momo\Desktop\LogFarm\src\ShadowBlue.LogFarm.Base\bin\Release\ShadowBlue.LogFarm.Base.pdb
-C:\Users\momo\Desktop\LogFarm\src\ShadowBlue.LogFarm.Base\bin\Release\ShadowBlue.LogFarm.Base.dll.CodeAnalysisLog.xml
-C:\Users\momo\Desktop\LogFarm\src\ShadowBlue.LogFarm.Base\bin\Release\ShadowBlue.LogFarm.Base.dll.lastcodeanalysissucceeded
-C:\Users\momo\Desktop\LogFarm\src\ShadowBlue.LogFarm.Base\obj\Release\ShadowBlue.LogFarm.Base.dll
-C:\Users\momo\Desktop\LogFarm\src\ShadowBlue.LogFarm.Base\obj\Release\ShadowBlue.LogFarm.Base.pdb

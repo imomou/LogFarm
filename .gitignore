@@ -12,3 +12,14 @@
 /src/ShadowBlue.Domain.Test/bin/Release
 /src/ShadowBlue.LogFarm.Domain/obj/Debug
 /src/ShadowBlue.LogFarm.Mvc/obj/Debug
+/src/ShadowBlue.Repository/obj/Debug
+/src/ShadowBlue.Domain.Test/bin/Debug
+/src/ShadowBlue.LogFarm.Base/obj/Debug
+/src/ShadowBlue.Domain.Test/obj/Debug
+/src/ShadowBlue.LogFarm.Domain/bin/Debug
+/src/ShadowBlue.LogFarm.Base/bin/Debug/ShadowBlue.LogFarm.Base.dll.config
+/src/ShadowBlue.LogFarm.Base/bin
+/src/ShadowBlue.Repository.Test/bin
+/src/ShadowBlue.Repository/bin/Release
+/src/ShadowBlue.LogFarm.Base/obj
+/src/ShadowBlue.Domain.Test/obj
