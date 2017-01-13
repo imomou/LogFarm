@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Amazon.CloudWatch;
 using Amazon.CloudWatchLogs;
 using Amazon.CloudWatchLogs.Model;
 using Amazon.Runtime;
@@ -34,6 +35,7 @@ namespace ShadowBlue.LogFarm.Domain.NLog
 
         public void InitialiseLogStream()
         {
+
             var describeLogStreamsResponse = _client.DescribeLogStreams(
                 new DescribeLogStreamsRequest(_logGroup)
                 {

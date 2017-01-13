@@ -1,0 +1,15 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="ShadowBlue.Repository.Test" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="ApplicationName" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">ShadowBlue.Repository.Test</Value>
+    </Setting>
+    <Setting Name="ElmahTableName" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">elmah-local-dev</Value>
+    </Setting>
+    <Setting Name="EnableElmahDynamoDb" Type="System.String" Scope="Application">
+      <Value Profile="(Default)" />
+    </Setting>
+  </Settings>
+</SettingsFile>

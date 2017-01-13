@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package >
   <metadata>
-    <id>ShadowBlue.LogFarm.Mvc</id>
+    <id>LogFarm.Mvc</id>
     <version>1.0.0.0</version>
     <authors>Sam Wang</authors>
     <owners>Sam Wang</owners>
@@ -11,7 +11,7 @@
     <copyright>Copyright 2015</copyright>
     <dependencies>
         <dependency id="elmah" version="1.2.2" />
-        <dependency id="AWSSDK" version="2.3.55.0" />
+        <dependency id="AWSSDK" version="[2.3.55,)" />
         <dependency id="WebActivatorEx" version="2.0" />
         <dependency id="Common.Logging.NLog30" version="3.3.1" />
         <dependency id="Nlog" version="(4.0.0, 4.3.1)" />

@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Web.Configuration;
 using Amazon;
+using Amazon.CloudWatchLogs;
 using Amazon.CloudWatchLogs.Model;
 using Amazon.EC2.Util;
 using NLog;
@@ -40,7 +41,7 @@ namespace ShadowBlue.LogFarm.Domain.NLog
                 return;
 
             var region = RegionEndpoint.GetBySystemName(regionConfig);
-            var awsClient = AWSClientFactory.CreateAmazonCloudWatchLogsClient(region);
+            var awsClient = new AmazonCloudWatchLogsClient(region);
             var logstream = string.Format("{0}-{1}-{2}", LogStreaam, Environment, EC2Metadata.InstanceId);
 
             InternalLogger.Debug("Writing LogStream", logstream);

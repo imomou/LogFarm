@@ -1,7 +1,0 @@
-C:\Users\momo\Desktop\LogFarm\src\ShadowBlue.Repository\bin\Debug\ShadowBlue.Repository.dll
-C:\Users\momo\Desktop\LogFarm\src\ShadowBlue.Repository\bin\Debug\ShadowBlue.Repository.pdb
-C:\Users\momo\Desktop\LogFarm\src\ShadowBlue.Repository\bin\Debug\AWSSDK.dll
-C:\Users\momo\Desktop\LogFarm\src\ShadowBlue.Repository\bin\Debug\AWSSDK.pdb
-C:\Users\momo\Desktop\LogFarm\src\ShadowBlue.Repository\obj\Debug\ShadowBlue.Repository.csprojResolveAssemblyReference.cache
-C:\Users\momo\Desktop\LogFarm\src\ShadowBlue.Repository\obj\Debug\ShadowBlue.Repository.dll
-C:\Users\momo\Desktop\LogFarm\src\ShadowBlue.Repository\obj\Debug\ShadowBlue.Repository.pdb

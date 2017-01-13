@@ -9,12 +9,12 @@ namespace ShadowBlue.Repository
 {
     public class DynamoDbRepository<T> : IRepository<T> where T : class
     {
-        private readonly DynamoDBContext _ddbcontext;
+        private readonly IDynamoDBContext _ddbcontext;
         private readonly string _applicationName;
         private readonly string _ddbTableName;
         private const string IndexName = "ApplicationName-DateTimeId-Index";
 
-        public DynamoDbRepository(string applicationName, string ddbTableName)
+        public DynamoDbRepository(string applicationName, string ddbTableName, IDynamoDBContext ddbcontext)
         {
             Contract.Requires(
                     !string.IsNullOrWhiteSpace(applicationName) &&
@@ -27,10 +27,12 @@ namespace ShadowBlue.Repository
             var awskey = WebConfigurationManager.AppSettings["AWSAccessKey"] ?? string.Empty;
             var awsSecret = WebConfigurationManager.AppSettings["AWSSecretKey"] ?? string.Empty;
 
-            if (string.IsNullOrEmpty(awskey) && string.IsNullOrEmpty(awsSecret))
-                _ddbcontext = new DynamoDBContext(AWSClientFactory.CreateAmazonDynamoDBClient());
-            else
-                _ddbcontext = new DynamoDBContext(AWSClientFactory.CreateAmazonDynamoDBClient(awskey, awsSecret));
+            _ddbcontext = ddbcontext;
+
+            //if (string.IsNullOrEmpty(awskey) && string.IsNullOrEmpty(awsSecret))
+            //    _ddbcontext = new DynamoDBContext(AWSClientFactory.CreateAmazonDynamoDBClient());
+            //else
+            //    _ddbcontext = new DynamoDBContext(AWSClientFactory.CreateAmazonDynamoDBClient(awskey, awsSecret));
         }
 
         public void Add(T entity)
