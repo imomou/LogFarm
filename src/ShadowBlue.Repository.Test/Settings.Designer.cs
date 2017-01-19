@@ -34,7 +34,7 @@ namespace ShadowBlue.Repository.Test {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("elmah-local-dev")]
+        [global::System.Configuration.DefaultSettingValueAttribute("elmah-dev")]
         public string ElmahTableName {
             get {
                 return ((string)(this["ElmahTableName"]));

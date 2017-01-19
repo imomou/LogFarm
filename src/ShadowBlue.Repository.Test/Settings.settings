@@ -6,7 +6,7 @@
       <Value Profile="(Default)">ShadowBlue.Repository.Test</Value>
     </Setting>
     <Setting Name="ElmahTableName" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">elmah-local-dev</Value>
+      <Value Profile="(Default)">elmah-dev</Value>
     </Setting>
     <Setting Name="EnableElmahDynamoDb" Type="System.String" Scope="Application">
       <Value Profile="(Default)" />

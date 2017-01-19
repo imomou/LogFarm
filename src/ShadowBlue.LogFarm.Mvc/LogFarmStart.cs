@@ -12,6 +12,7 @@ namespace ShadowBlue.LogFarm.Mvc
         public static void Start()
         {
             GlobalFilters.Filters.Add(new ElmahErrorAttribute());
+            GlobalFilters.Filters.Add(new HandleErrorAttribute());
         }
     }
 }

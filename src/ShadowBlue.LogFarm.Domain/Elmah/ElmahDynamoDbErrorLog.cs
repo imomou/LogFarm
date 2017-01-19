@@ -7,6 +7,7 @@ using System.Linq;
 using Amazon.DynamoDBv2.DocumentModel;
 using Elmah;
 using NLog.Common;
+using ShadowBlue.LogFarm.Base.Properties;
 using ShadowBlue.Repository;
 using ShadowBlue.Repository.Models;
 using ApplicationException = Elmah.ApplicationException;
@@ -25,18 +26,13 @@ namespace ShadowBlue.LogFarm.Domain.Elmah
         private readonly string[] _unwantedChars = {".", "."};
         private const int MaxAppNameLength = 60;
         
-        /// <summary>        ///  Elmah by default ony accept this as constructor
-        /// </summary>
-        /// <param name="config"></param>
-        public DynamoDbErrorLog(IDictionary config, IRepository<ElmahError> repository)
+        public DynamoDbErrorLog(IDictionary config)
         {
             if (config == null)
                 throw new ArgumentException("config is null");
 
-            _repository = repository;
             ApplicationName = (string)config["ddbAppName"] ?? string.Empty;
             Environment = (string)config["environment"] ?? string.Empty;
-            var tableName = (string)config["ddbTableName"] ?? "elmah-table";
 
             if (ApplicationName.Length > MaxAppNameLength)
             {
@@ -55,9 +51,18 @@ namespace ShadowBlue.LogFarm.Domain.Elmah
             var applcationName = string.Format("{0}-{1}", ApplicationName, Environment);
             _applicationName = applcationName;
 
-            //_repository = new DynamoDbRepository<ElmahError>(
-            //    applcationName, tableName
-            //    );`
+            _repository = new DynamoDbRepository<ElmahError>(Settings.Default, _applicationName);
+        }
+
+        public DynamoDbErrorLog(IDictionary config, IRepository<ElmahError> repository)
+        {
+            if (config == null)
+                throw new ArgumentException("config is null");
+
+            ApplicationName = (string)config["ddbAppName"] ?? string.Empty;
+            Environment = (string)config["environment"] ?? string.Empty;
+
+            _repository = repository;
         }
 
         public override string Name
@@ -131,7 +136,7 @@ namespace ShadowBlue.LogFarm.Domain.Elmah
             else
             {
                 items = _repository
-                    .GetAll(_applicationName)
+                    .GetAll()
                     .OrderByDescending(a => a);
             }
 

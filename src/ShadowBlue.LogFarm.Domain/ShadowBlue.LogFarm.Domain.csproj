@@ -88,6 +88,10 @@
     <Content Include="Elmah\App_Readme\Elmah.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ShadowBlue.LogFarm.Base\ShadowBlue.LogFarm.Base.csproj">
+      <Project>{9292ca13-33a7-412d-8358-096d40a17922}</Project>
+      <Name>ShadowBlue.LogFarm.Base</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ShadowBlue.Repository\ShadowBlue.Repository.csproj">
       <Project>{80CB5B4D-2DB1-4AD8-B6D7-26BB15BD269D}</Project>
       <Name>ShadowBlue.Repository</Name>

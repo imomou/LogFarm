@@ -6,12 +6,12 @@ using Amazon.DynamoDBv2.DocumentModel;
 namespace ShadowBlue.Repository
 {
     [ContractClass(typeof(RepositoryInterface<>))]
-    public interface IRepository<T> where T : class
+    public interface IRepository<T> : IDisposable where T : class
     {
         void Add(T entity);
         void Delete(string id);
         T Get(string id);
-        IEnumerable<T> GetAll(string applicationName);
+        IEnumerable<T> GetAll();
         IEnumerable<T> GetAllWithQuery(ScanOperator scanOperator, ConditionalOperatorValues? condition, params object[] values);
     }
 
@@ -41,10 +41,14 @@ namespace ShadowBlue.Repository
             return default(T);
         }
 
-        public IEnumerable<T> GetAll(string applicationName)
+        public IEnumerable<T> GetAll()
         {
             Contract.Ensures(Contract.Result<IEnumerable<T>>() != null);
             return default(IEnumerable<T>);
+        }
+
+        public void Dispose()
+        {
         }
     }
 }

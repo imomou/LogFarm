@@ -23,3 +23,9 @@
 /src/ShadowBlue.Repository/bin/Release
 /src/ShadowBlue.LogFarm.Base/obj
 /src/ShadowBlue.Domain.Test/obj
+/src/ShadowBlue.LogFarm.Domain/bin
+/src/ShadowBlue.LogFarm.Domain/obj
+/src/ShadowBlue.LogFarm.Mvc/obj
+/src/ShadowBlue.Repository.Test/obj
+/src/ShadowBlue.Repository/obj
+/src/ShadowBlue.LogFarm.Mvc/CiWebDeploy/*.zip

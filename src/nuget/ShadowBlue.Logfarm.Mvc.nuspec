@@ -10,8 +10,12 @@
     <releaseNotes>LogFarm initial with Elmah and NLog working to AWS</releaseNotes>
     <copyright>Copyright 2015</copyright>
     <dependencies>
+        <dependency id="AWSSDK.CloudWatch" version="[3.3.1.3,]" />
+        <dependency id="AWSSDK.CloudWatchLogs" version="[3.3.2.1,]" />
+        <dependency id="AWSSDK.Core" version="[3.3.7.1,]" />
+        <dependency id="AWSSDK.DynamoDBv2" version="[3.3.1.5,]" />
+        <dependency id="AWSSDK.EC2" version="[3.3.4.4,]" />
         <dependency id="elmah" version="1.2.2" />
-        <dependency id="AWSSDK" version="[2.3.55,)" />
         <dependency id="WebActivatorEx" version="2.0" />
         <dependency id="Common.Logging.NLog30" version="3.3.1" />
         <dependency id="Nlog" version="(4.0.0, 4.3.1)" />
@@ -19,8 +23,8 @@
   </metadata>
   <files>
     <file src="..\ShadowBlue.LogFarm.Mvc\bin\**\ShadowBlue.LogFarm.Mvc.dll" target="lib\net40\" />
-    <file src="..\ShadowBlue.LogFarm.Mvc\bin\**\ShadowBlue.LogFarm.Domain.dll" target="lib\net40\" />
-    <file src="..\ShadowBlue.LogFarm.Mvc\bin\**\ShadowBlue.LogFarm.Repository.dll" target="lib\net40\" />
+    <file src="..\ShadowBlue.LogFarm.Domain\bin\**\ShadowBlue.LogFarm.Domain.dll" target="lib\net40\" />
+    <file src="..\ShadowBlue.LogFarm.Repository\bin\**\ShadowBlue.LogFarm.Repository.dll" target="lib\net40\" />
     <file src="mvc-content\*.transform" target="content" />
     <file src="parameters.xml.install.xdt" target="content" />
     <file src="parameters.xml.uninstall.xdt" target="content" />

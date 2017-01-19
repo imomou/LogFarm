@@ -1,69 +1,86 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics.Contracts;
+using System.Linq;
 using System.Web.Configuration;
-using Amazon;
+using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DataModel;
 using Amazon.DynamoDBv2.DocumentModel;
+using ShadowBlue.LogFarm.Base.Properties;
 
 namespace ShadowBlue.Repository
 {
     public class DynamoDbRepository<T> : IRepository<T> where T : class
     {
         private readonly IDynamoDBContext _ddbcontext;
+        private readonly ISettings _settings;
         private readonly string _applicationName;
-        private readonly string _ddbTableName;
         private const string IndexName = "ApplicationName-DateTimeId-Index";
 
-        public DynamoDbRepository(string applicationName, string ddbTableName, IDynamoDBContext ddbcontext)
+        public DynamoDbRepository(ISettings settings, string applicationName)
         {
             Contract.Requires(
-                    !string.IsNullOrWhiteSpace(applicationName) &&
-                    !string.IsNullOrEmpty(ddbTableName)
+                    !string.IsNullOrEmpty(settings.ApplicationName) &&
+                    !string.IsNullOrEmpty(settings.ElmahTableName)
                 );
 
-            _applicationName = applicationName;
-            _ddbTableName = ddbTableName;
+            _settings = settings;
+            _applicationName = string.IsNullOrEmpty(applicationName) ? 
+                _settings.ApplicationName : 
+                applicationName;
 
             var awskey = WebConfigurationManager.AppSettings["AWSAccessKey"] ?? string.Empty;
             var awsSecret = WebConfigurationManager.AppSettings["AWSSecretKey"] ?? string.Empty;
 
-            _ddbcontext = ddbcontext;
+            if (string.IsNullOrEmpty(awskey) && string.IsNullOrEmpty(awsSecret))
+                _ddbcontext = new DynamoDBContext();
+            else
+                _ddbcontext = new DynamoDBContext(new AmazonDynamoDBClient(awskey, awsSecret));
+        }
 
-            //if (string.IsNullOrEmpty(awskey) && string.IsNullOrEmpty(awsSecret))
-            //    _ddbcontext = new DynamoDBContext(AWSClientFactory.CreateAmazonDynamoDBClient());
-            //else
-            //    _ddbcontext = new DynamoDBContext(AWSClientFactory.CreateAmazonDynamoDBClient(awskey, awsSecret));
+        public DynamoDbRepository(ISettings settings, IDynamoDBContext ddbcontext, string dummy)
+        {
+            _settings = settings;
+            _ddbcontext = ddbcontext;
+            _applicationName = settings.ApplicationName;
         }
 
         public void Add(T entity)
         {
             _ddbcontext.Save(entity, new DynamoDBOperationConfig
             {
-                OverrideTableName = _ddbTableName
+                OverrideTableName = _settings.ElmahTableName
             });
         }
 
         public void Delete(string id)
         {
-            _ddbcontext.Delete(id, new DynamoDBOperationConfig
-            {
-                OverrideTableName = _ddbTableName
-            });
+            _ddbcontext.Delete<T>(
+                id,
+                _applicationName, 
+                new DynamoDBOperationConfig
+                {
+                    OverrideTableName = _settings.ElmahTableName
+                }
+            );
         }
 
         public T Get(string id)
         {
-            return _ddbcontext.Load<T>(id, new DynamoDBOperationConfig
-            {
-                OverrideTableName = _ddbTableName
-            });
+            return _ddbcontext.Load<T>(
+                id, 
+                _applicationName,
+                new DynamoDBOperationConfig
+                {
+                    OverrideTableName = _settings.ElmahTableName
+                }
+            );
         }
 
-        public IEnumerable<T> GetAll(string applicationName)
+        public IEnumerable<T> GetAll()
         {
-            return _ddbcontext.Query<T>(applicationName, new DynamoDBOperationConfig
+            return _ddbcontext.FromScan<T>(new ScanOperationConfig(), new DynamoDBOperationConfig
             {
-                OverrideTableName = _ddbTableName,
+                OverrideTableName = _settings.ElmahTableName,
                 IndexName = IndexName
             });
         }
@@ -72,15 +89,20 @@ namespace ShadowBlue.Repository
         {
             var config = new DynamoDBOperationConfig
             {
-                OverrideTableName = _ddbTableName,
-                IndexName = IndexName
+                OverrideTableName = _settings.ElmahTableName,
+                IndexName = IndexName,          
             };
             config.QueryFilter.AddRange(new List<ScanCondition>
             {
                 new ScanCondition("DateTimeId", scanOperator, values)
             });
 
-            return _ddbcontext.Query<T>(_applicationName, config);
+            return _ddbcontext.Query<T>(_settings.ApplicationName, config);
+        }
+
+        public void Dispose()
+        {
+            if (_ddbcontext != null) _ddbcontext.Dispose();
         }
     }
 }
