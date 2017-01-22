@@ -1,9 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Web.Configuration;
+using Amazon;
 using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DataModel;
 using Amazon.DynamoDBv2.DocumentModel;
+using Amazon.Runtime;
 using ShadowBlue.LogFarm.Base.Properties;
 
 namespace ShadowBlue.LogFarm.Repository
@@ -11,35 +14,39 @@ namespace ShadowBlue.LogFarm.Repository
     public class DynamoDbRepository<T> : IRepository<T> where T : class
     {
         private readonly IDynamoDBContext _ddbcontext;
-        private readonly ISettings _settings;
         private readonly string _applicationName;
+        private readonly string _ddbTableName;
         private const string IndexName = "ApplicationName-DateTimeId-Index";
 
-        public DynamoDbRepository(ISettings settings, string applicationName)
+        public DynamoDbRepository(string ddbTableName, string applicationName)
         {
             Contract.Requires(
-                    !string.IsNullOrEmpty(settings.ApplicationName) &&
-                    !string.IsNullOrEmpty(settings.ElmahTableName)
+                    !string.IsNullOrEmpty(ddbTableName) &&
+                    !string.IsNullOrEmpty(applicationName)
                 );
 
-            _settings = settings;
-            _applicationName = string.IsNullOrEmpty(applicationName) ? 
-                _settings.ApplicationName : 
-                applicationName;
+            _ddbTableName = ddbTableName;
+            _applicationName = applicationName;
 
             var awskey = WebConfigurationManager.AppSettings["AWSAccessKey"] ?? string.Empty;
             var awsSecret = WebConfigurationManager.AppSettings["AWSSecretKey"] ?? string.Empty;
+            var regionStr = WebConfigurationManager.AppSettings["AWSRegion"] ?? string.Empty;
 
+            var region = RegionEndpoint.GetBySystemName(regionStr);
+
+            if (region.DisplayName.ToLower().Contains("unknown"))
+                throw new ApplicationException(string.Format("Invalid region configured {0}", regionStr));
+                
             if (string.IsNullOrEmpty(awskey) && string.IsNullOrEmpty(awsSecret))
-                _ddbcontext = new DynamoDBContext();
+                _ddbcontext = new DynamoDBContext(region);
             else
-                _ddbcontext = new DynamoDBContext(new AmazonDynamoDBClient(awskey, awsSecret));
+                _ddbcontext = new DynamoDBContext(new AmazonDynamoDBClient(awskey, awsSecret, region));
         }
 
         public DynamoDbRepository(ISettings settings, IDynamoDBContext ddbcontext, string dummy)
         {
-            _settings = settings;
             _ddbcontext = ddbcontext;
+            _ddbTableName = settings.ElmahTableName;
             _applicationName = settings.ApplicationName;
         }
 
@@ -47,7 +54,7 @@ namespace ShadowBlue.LogFarm.Repository
         {
             _ddbcontext.Save(entity, new DynamoDBOperationConfig
             {
-                OverrideTableName = _settings.ElmahTableName
+                OverrideTableName = _ddbTableName
             });
         }
 
@@ -58,7 +65,7 @@ namespace ShadowBlue.LogFarm.Repository
                 _applicationName, 
                 new DynamoDBOperationConfig
                 {
-                    OverrideTableName = _settings.ElmahTableName
+                    OverrideTableName = _ddbTableName
                 }
             );
         }
@@ -70,7 +77,7 @@ namespace ShadowBlue.LogFarm.Repository
                 _applicationName,
                 new DynamoDBOperationConfig
                 {
-                    OverrideTableName = _settings.ElmahTableName
+                    OverrideTableName = _ddbTableName
                 }
             );
         }
@@ -79,7 +86,7 @@ namespace ShadowBlue.LogFarm.Repository
         {
             return _ddbcontext.FromScan<T>(new ScanOperationConfig(), new DynamoDBOperationConfig
             {
-                OverrideTableName = _settings.ElmahTableName,
+                OverrideTableName = _ddbTableName,
                 IndexName = IndexName
             });
         }
@@ -88,7 +95,7 @@ namespace ShadowBlue.LogFarm.Repository
         {
             var config = new DynamoDBOperationConfig
             {
-                OverrideTableName = _settings.ElmahTableName,
+                OverrideTableName = _ddbTableName,
                 IndexName = IndexName,          
             };
             config.QueryFilter.AddRange(new List<ScanCondition>
@@ -96,7 +103,7 @@ namespace ShadowBlue.LogFarm.Repository
                 new ScanCondition("DateTimeId", scanOperator, values)
             });
 
-            return _ddbcontext.Query<T>(_settings.ApplicationName, config);
+            return _ddbcontext.Query<T>(_applicationName, config);
         }
 
         public void Dispose()

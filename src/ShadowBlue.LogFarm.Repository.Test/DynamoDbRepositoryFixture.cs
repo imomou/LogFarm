@@ -19,7 +19,7 @@ namespace ShadowBlue.LogFarm.Repository.Test
         private static readonly DynamoDBOperationConfig DefaultDbOperationConfig
             = new DynamoDBOperationConfig
             {
-                OverrideTableName = Base.Properties.Settings.Default.ElmahTableName,
+                OverrideTableName = Settings.Default.ElmahTableName,
                 SkipVersionCheck = true,
                 IndexName = "ApplicationName-DateTimeId-Index"
             };
@@ -45,9 +45,9 @@ namespace ShadowBlue.LogFarm.Repository.Test
             var settingMock = container.GetMock<ISettings>();
 
             settingMock.Setup(x => x.ApplicationName)
-                .Returns(Base.Properties.Settings.Default.ApplicationName);
+                .Returns(Settings.Default.ApplicationName);
             settingMock.Setup(x => x.ElmahTableName)
-                .Returns(Base.Properties.Settings.Default.ElmahTableName);
+                .Returns(Settings.Default.ElmahTableName);
 
             container.SetInstance("dummy");
 
@@ -56,7 +56,7 @@ namespace ShadowBlue.LogFarm.Repository.Test
             var fakeEpochId = string.Format("{0}-{1}", "123", Guid.NewGuid());
 
             var error = Builder<ElmahError>.CreateNew()
-                .With(x => x.ApplicationName = Base.Properties.Settings.Default.ApplicationName)
+                .With(x => x.ApplicationName = Settings.Default.ApplicationName)
                 .With(x => x.DateTimeId = fakeEpochId)
                 .Build();
 
@@ -66,10 +66,10 @@ namespace ShadowBlue.LogFarm.Repository.Test
             //assert
             repositoryMock.Verify(x =>
                     x.Save(It.Is<ElmahError>(err =>
-                        error.ApplicationName == Base.Properties.Settings.Default.ApplicationName &&
+                        error.ApplicationName == Settings.Default.ApplicationName &&
                         error.DateTimeId == fakeEpochId
                     ),
-                    It.Is<DynamoDBOperationConfig>(config => config.OverrideTableName == Base.Properties.Settings.Default.ElmahTableName)
+                    It.Is<DynamoDBOperationConfig>(config => config.OverrideTableName == Settings.Default.ElmahTableName)
                 ),
                 Times.Once()
             );
@@ -84,9 +84,9 @@ namespace ShadowBlue.LogFarm.Repository.Test
 
             container.SetInstance<IDynamoDBContext>(_ddb);
             settingMock.Setup(x => x.ApplicationName)
-                .Returns(Base.Properties.Settings.Default.ApplicationName);
+                .Returns(Settings.Default.ApplicationName);
             settingMock.Setup(x => x.ElmahTableName)
-                .Returns(Base.Properties.Settings.Default.ElmahTableName);
+                .Returns(Settings.Default.ElmahTableName);
 
             container.SetInstance("dummy");
 
@@ -95,7 +95,7 @@ namespace ShadowBlue.LogFarm.Repository.Test
             var fakeEpochId = string.Format("{0}-{1}", "123", Guid.NewGuid());
 
             var error = Builder<ElmahError>.CreateNew()
-                .With(x => x.ApplicationName = Base.Properties.Settings.Default.ApplicationName)
+                .With(x => x.ApplicationName = Settings.Default.ApplicationName)
                 .With(x => x.DateTimeId = fakeEpochId)
                 .Build();
 
@@ -118,9 +118,9 @@ namespace ShadowBlue.LogFarm.Repository.Test
             var settingMock = container.GetMock<ISettings>();
 
             settingMock.Setup(x => x.ApplicationName)
-                .Returns(Base.Properties.Settings.Default.ApplicationName);
+                .Returns(Settings.Default.ApplicationName);
             settingMock.Setup(x => x.ElmahTableName)
-                .Returns(Base.Properties.Settings.Default.ElmahTableName);
+                .Returns(Settings.Default.ElmahTableName);
 
            
             container.SetInstance("dummy");
@@ -139,10 +139,10 @@ namespace ShadowBlue.LogFarm.Repository.Test
                             err == fakeEpochId
                         ),
                         It.Is<string>(asd =>
-                            asd == Base.Properties.Settings.Default.ApplicationName
+                            asd == Settings.Default.ApplicationName
                         ),
                         It.Is<DynamoDBOperationConfig>(config => 
-                            config.OverrideTableName == Base.Properties.Settings.Default.ElmahTableName)
+                            config.OverrideTableName == Settings.Default.ElmahTableName)
                     ),
                 Times.Once()
             );
@@ -156,9 +156,9 @@ namespace ShadowBlue.LogFarm.Repository.Test
             var settingMock = container.GetMock<ISettings>();
 
             settingMock.Setup(x => x.ApplicationName)
-                .Returns(Base.Properties.Settings.Default.ApplicationName);
+                .Returns(Settings.Default.ApplicationName);
             settingMock.Setup(x => x.ElmahTableName)
-                .Returns(Base.Properties.Settings.Default.ElmahTableName);
+                .Returns(Settings.Default.ElmahTableName);
 
             container.SetInstance<IDynamoDBContext>(_ddb);
             container.SetInstance("dummy");
@@ -168,7 +168,7 @@ namespace ShadowBlue.LogFarm.Repository.Test
             var fakeEpochId = string.Format("{0}-{1}", "123", Guid.NewGuid());
 
             var error = Builder<ElmahError>.CreateNew()
-                .With(x => x.ApplicationName = Base.Properties.Settings.Default.ApplicationName)
+                .With(x => x.ApplicationName = Settings.Default.ApplicationName)
                 .With(x => x.DateTimeId = fakeEpochId)
                 .Build();
 
@@ -192,9 +192,9 @@ namespace ShadowBlue.LogFarm.Repository.Test
             var settingMock = container.GetMock<ISettings>();
 
             settingMock.Setup(x => x.ApplicationName)
-                .Returns(Base.Properties.Settings.Default.ApplicationName);
+                .Returns(Settings.Default.ApplicationName);
             settingMock.Setup(x => x.ElmahTableName)
-                .Returns(Base.Properties.Settings.Default.ElmahTableName);
+                .Returns(Settings.Default.ElmahTableName);
 
             container.SetInstance("dummy");
 
@@ -210,10 +210,10 @@ namespace ShadowBlue.LogFarm.Repository.Test
                             err == fakeEpochId
                         ),
                          It.Is<string>(err =>
-                            err == Base.Properties.Settings.Default.ApplicationName
+                            err == Settings.Default.ApplicationName
                         ),
                         It.Is<DynamoDBOperationConfig>(config => 
-                            config.OverrideTableName == Base.Properties.Settings.Default.ElmahTableName
+                            config.OverrideTableName == Settings.Default.ElmahTableName
                         )
                 ),
                 Times.Once()
@@ -228,9 +228,9 @@ namespace ShadowBlue.LogFarm.Repository.Test
             var settingMock = container.GetMock<ISettings>();
 
             settingMock.Setup(x => x.ApplicationName)
-                .Returns(Base.Properties.Settings.Default.ApplicationName);
+                .Returns(Settings.Default.ApplicationName);
             settingMock.Setup(x => x.ElmahTableName)
-                .Returns(Base.Properties.Settings.Default.ElmahTableName);
+                .Returns(Settings.Default.ElmahTableName);
 
             container.SetInstance("dummy");
             container.SetInstance<IDynamoDBContext>(_ddb);
@@ -240,7 +240,7 @@ namespace ShadowBlue.LogFarm.Repository.Test
             var fakeEpochId = string.Format("{0}-{1}", "123", Guid.NewGuid());
 
             var error = Builder<ElmahError>.CreateNew()
-                .With(x => x.ApplicationName = Base.Properties.Settings.Default.ApplicationName)
+                .With(x => x.ApplicationName = Settings.Default.ApplicationName)
                 .With(x => x.DateTimeId = fakeEpochId)
                 .Build();
 
@@ -262,9 +262,9 @@ namespace ShadowBlue.LogFarm.Repository.Test
             var settingMock = container.GetMock<ISettings>();
 
             settingMock.Setup(x => x.ApplicationName)
-                .Returns(Base.Properties.Settings.Default.ApplicationName);
+                .Returns(Settings.Default.ApplicationName);
             settingMock.Setup(x => x.ElmahTableName)
-                .Returns(Base.Properties.Settings.Default.ElmahTableName);
+                .Returns(Settings.Default.ElmahTableName);
 
             container.SetInstance("dummy");
 
@@ -278,7 +278,7 @@ namespace ShadowBlue.LogFarm.Repository.Test
                     x.FromScan<ElmahError>(
                         It.IsAny<ScanOperationConfig>(),
                         It.Is<DynamoDBOperationConfig>(config =>
-                            config.OverrideTableName == Base.Properties.Settings.Default.ElmahTableName
+                            config.OverrideTableName == Settings.Default.ElmahTableName
                         )
                 ),
                 Times.Once()
@@ -293,7 +293,7 @@ namespace ShadowBlue.LogFarm.Repository.Test
             var settingMock = container.GetMock<ISettings>();
 
             settingMock.Setup(x => x.ElmahTableName)
-                .Returns(Base.Properties.Settings.Default.ElmahTableName);
+                .Returns(Settings.Default.ElmahTableName);
 
             container.SetInstance("dummy");
             container.SetInstance<IDynamoDBContext>(_ddb);
@@ -302,7 +302,7 @@ namespace ShadowBlue.LogFarm.Repository.Test
 
             var errors = Builder<ElmahError>.CreateListOfSize(3)
                 .All()
-                .With(x => x.ApplicationName = Base.Properties.Settings.Default.ApplicationName)
+                .With(x => x.ApplicationName = Settings.Default.ApplicationName)
                 .Build();
 
             foreach (var error in errors)
@@ -326,9 +326,9 @@ namespace ShadowBlue.LogFarm.Repository.Test
             var settingMock = container.GetMock<ISettings>();
 
             settingMock.Setup(x => x.ApplicationName)
-                .Returns(Base.Properties.Settings.Default.ApplicationName);
+                .Returns(Settings.Default.ApplicationName);
             settingMock.Setup(x => x.ElmahTableName)
-                .Returns(Base.Properties.Settings.Default.ElmahTableName);
+                .Returns(Settings.Default.ElmahTableName);
 
             container.SetInstance("dummy");
 
@@ -340,9 +340,9 @@ namespace ShadowBlue.LogFarm.Repository.Test
             //assert
             repositoryMock.Verify(x =>
                     x.Query<ElmahError>(
-                        It.Is<string>(y => y == Base.Properties.Settings.Default.ApplicationName) ,
+                        It.Is<string>(y => y == Settings.Default.ApplicationName) ,
                         It.Is<DynamoDBOperationConfig>(config =>
-                            config.OverrideTableName == Base.Properties.Settings.Default.ElmahTableName &&
+                            config.OverrideTableName == Settings.Default.ElmahTableName &&
                             config.QueryFilter.Single().Operator == ScanOperator.GreaterThan &&
                             config.QueryFilter.Single().PropertyName == "DateTimeId"
                         )
@@ -359,9 +359,9 @@ namespace ShadowBlue.LogFarm.Repository.Test
             var settingMock = container.GetMock<ISettings>();
 
             settingMock.Setup(x => x.ApplicationName)
-                .Returns(Base.Properties.Settings.Default.ApplicationName);
+                .Returns(Settings.Default.ApplicationName);
             settingMock.Setup(x => x.ElmahTableName)
-                .Returns(Base.Properties.Settings.Default.ElmahTableName);
+                .Returns(Settings.Default.ElmahTableName);
 
             container.SetInstance("dummy");
             container.SetInstance<IDynamoDBContext>(_ddb);
@@ -370,7 +370,7 @@ namespace ShadowBlue.LogFarm.Repository.Test
 
             var errors = Builder<ElmahError>.CreateListOfSize(3)
                 .All()
-                .With(x => x.ApplicationName = Base.Properties.Settings.Default.ApplicationName)
+                .With(x => x.ApplicationName = Settings.Default.ApplicationName)
                 .Build();
 
             var i = 0;

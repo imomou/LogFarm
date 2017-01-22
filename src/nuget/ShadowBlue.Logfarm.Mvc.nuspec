@@ -25,7 +25,8 @@
     <file src="..\ShadowBlue.LogFarm.Mvc\bin\**\ShadowBlue.LogFarm.Mvc.dll" target="lib\net40\" />
     <file src="..\ShadowBlue.LogFarm.Domain\bin\**\ShadowBlue.LogFarm.Domain.dll" target="lib\net40\" />
     <file src="..\ShadowBlue.LogFarm.Repository\bin\**\ShadowBlue.LogFarm.Repository.dll" target="lib\net40\" />
-    <file src="mvc-content\*.transform" target="content" />
+    <file src="..\ShadowBlue.LogFarm.Base\bin\**\ShadowBlue.LogFarm.Base.dll" target="lib\net40\" />
+    <file src="mvc-content\*" target="content" />
     <file src="parameters.xml.install.xdt" target="content" />
     <file src="parameters.xml.uninstall.xdt" target="content" />
 		<file src="aws\NLog.config" target="content" />

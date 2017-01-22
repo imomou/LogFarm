@@ -1,10 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Web.Configuration;
 using Amazon;
 using Amazon.CloudWatchLogs;
 using Amazon.CloudWatchLogs.Model;
 using Amazon.EC2.Util;
+using Amazon.Runtime;
 using NLog;
 using NLog.Common;
 using NLog.Config;
@@ -35,19 +37,28 @@ namespace ShadowBlue.LogFarm.Domain.NLog
             base.InitializeTarget();
 
             var regionConfig = WebConfigurationManager.AppSettings["AWSRegion"] ??
-                               "ap-southeast-2";
-
-            if (string.IsNullOrEmpty(EC2Metadata.InstanceId))
-                return;
+                               "us-west-1";
 
             var region = RegionEndpoint.GetBySystemName(regionConfig);
             var awsClient = new AmazonCloudWatchLogsClient(region);
-            var logstream = string.Format("{0}-{1}-{2}", LogStreaam, Environment, EC2Metadata.InstanceId);
+            var logstream = !string.IsNullOrEmpty(EC2Metadata.InstanceId)
+                ? string.Format("{0}-{1}-{2}", LogStreaam, Environment, EC2Metadata.InstanceId)
+                : string.Format("{0}-{1}", LogStreaam, Environment);
 
             InternalLogger.Debug("Writing LogStream", logstream);
 
             _client = new CloudWatchLogsClientWrapper(awsClient, LogGroup, logstream);
-            _client.InitialiseLogStream();
+
+            try
+            {
+                _client.InitialiseLogStream();
+            }
+            catch (AmazonServiceException ex)
+            {
+                //purely for runnning it locally for the reason this will be still instantiated even if it's not part of the target
+                if (ex.Message != "Unable to find credentials")
+                throw;
+            } 
         }
 
         protected override void Write(LogEventInfo logEvent)

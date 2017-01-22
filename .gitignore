@@ -8,3 +8,4 @@ packages
 CiWebDeploy
 /src/CiOutput
 /src/*.nupkg
+CiArtefact

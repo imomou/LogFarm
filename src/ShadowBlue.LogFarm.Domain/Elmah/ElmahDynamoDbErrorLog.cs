@@ -32,7 +32,8 @@ namespace ShadowBlue.LogFarm.Domain.Elmah
                 throw new ArgumentException("config is null");
 
             ApplicationName = (string)config["ddbAppName"] ?? string.Empty;
-            Environment = (string)config["environment"] ?? string.Empty;
+            Environment = (string)config["ddbEnvironment"] ?? string.Empty;
+            var ddbTableName = (string)config["ddbTableName"] ?? string.Empty;
 
             if (ApplicationName.Length > MaxAppNameLength)
             {
@@ -51,7 +52,7 @@ namespace ShadowBlue.LogFarm.Domain.Elmah
             var applcationName = string.Format("{0}-{1}", ApplicationName, Environment);
             _applicationName = applcationName;
 
-            _repository = new DynamoDbRepository<ElmahError>(Settings.Default, _applicationName);
+            _repository = new DynamoDbRepository<ElmahError>(ddbTableName, _applicationName);
         }
 
         public ElmahDynamoDbErrorLog(IDictionary config, IRepository<ElmahError> repository)
