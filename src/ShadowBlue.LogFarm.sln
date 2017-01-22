@@ -1,6 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 2013
+VisualStudioVersion = 12.0.40629.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShadowBlue.LogFarm.Mvc", "ShadowBlue.LogFarm.Mvc\ShadowBlue.LogFarm.Mvc.csproj", "{39AFADFC-ED15-465E-9CC7-EABB6F0B4CCE}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{77C92E2E-0C2B-4045-A37C-6C3257C6AF21}"
@@ -10,13 +12,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{77C92E
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShadowBlue.LogFarm.Domain", "ShadowBlue.LogFarm.Domain\ShadowBlue.LogFarm.Domain.csproj", "{599BDEEC-9400-4CD0-B518-67D1AD01FABE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShadowBlue.Repository", "ShadowBlue.Repository\ShadowBlue.Repository.csproj", "{80CB5B4D-2DB1-4AD8-B6D7-26BB15BD269D}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShadowBlue.LogFarm.Base", "ShadowBlue.LogFarm.Base\ShadowBlue.LogFarm.Base.csproj", "{9292CA13-33A7-412D-8358-096D40A17922}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShadowBlue.Domain.Test", "ShadowBlue.Domain.Test\ShadowBlue.Domain.Test.csproj", "{B1EDBC76-EEFC-437B-9504-CA017B4F964A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShadowBlue.LogFarm.Repository", "ShadowBlue.LogFarm.Repository\ShadowBlue.LogFarm.Repository.csproj", "{80CB5B4D-2DB1-4AD8-B6D7-26BB15BD269D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShadowBlue.Repository.Test", "ShadowBlue.Repository.Test\ShadowBlue.Repository.Test.csproj", "{2C38A8E6-54BE-41C9-B447-639D59E337E4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShadowBlue.LogFarm.Domain.Test", "ShadowBlue.LogFarm.Domain.Test\ShadowBlue.LogFarm.Domain.Test.csproj", "{B1EDBC76-EEFC-437B-9504-CA017B4F964A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShadowBlue.LogFarm.Repository.Test", "ShadowBlue.LogFarm.Repository.Test\ShadowBlue.LogFarm.Repository.Test.csproj", "{2C38A8E6-54BE-41C9-B447-639D59E337E4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -32,14 +34,14 @@ Global
 		{599BDEEC-9400-4CD0-B518-67D1AD01FABE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{599BDEEC-9400-4CD0-B518-67D1AD01FABE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{599BDEEC-9400-4CD0-B518-67D1AD01FABE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{80CB5B4D-2DB1-4AD8-B6D7-26BB15BD269D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{80CB5B4D-2DB1-4AD8-B6D7-26BB15BD269D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{80CB5B4D-2DB1-4AD8-B6D7-26BB15BD269D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{80CB5B4D-2DB1-4AD8-B6D7-26BB15BD269D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{9292CA13-33A7-412D-8358-096D40A17922}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{9292CA13-33A7-412D-8358-096D40A17922}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9292CA13-33A7-412D-8358-096D40A17922}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9292CA13-33A7-412D-8358-096D40A17922}.Release|Any CPU.Build.0 = Release|Any CPU
+		{80CB5B4D-2DB1-4AD8-B6D7-26BB15BD269D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{80CB5B4D-2DB1-4AD8-B6D7-26BB15BD269D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{80CB5B4D-2DB1-4AD8-B6D7-26BB15BD269D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{80CB5B4D-2DB1-4AD8-B6D7-26BB15BD269D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B1EDBC76-EEFC-437B-9504-CA017B4F964A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{B1EDBC76-EEFC-437B-9504-CA017B4F964A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B1EDBC76-EEFC-437B-9504-CA017B4F964A}.Release|Any CPU.ActiveCfg = Release|Any CPU

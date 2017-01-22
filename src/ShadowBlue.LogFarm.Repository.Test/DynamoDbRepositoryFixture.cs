@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using Amazon;
 using Amazon.DynamoDBv2.DataModel;
@@ -7,12 +6,12 @@ using Amazon.DynamoDBv2.DocumentModel;
 using FizzWare.NBuilder;
 using Moq;
 using NUnit.Framework;
-using ShadowBlue.Repository.Models;
 using ShadowBlue.LogFarm.Base;
 using ShadowBlue.LogFarm.Base.Properties;
+using ShadowBlue.LogFarm.Repository.Models;
 using Should.Fluent;
 
-namespace ShadowBlue.Repository.Test
+namespace ShadowBlue.LogFarm.Repository.Test
 {
     [TestFixture(Category = LogFarmApplication.TestCategories.Integration)]
     public class DynamoDbRepositoryFixture
@@ -20,7 +19,7 @@ namespace ShadowBlue.Repository.Test
         private static readonly DynamoDBOperationConfig DefaultDbOperationConfig
             = new DynamoDBOperationConfig
             {
-                OverrideTableName = Settings.Default.ElmahTableName,
+                OverrideTableName = Base.Properties.Settings.Default.ElmahTableName,
                 SkipVersionCheck = true,
                 IndexName = "ApplicationName-DateTimeId-Index"
             };
@@ -40,14 +39,15 @@ namespace ShadowBlue.Repository.Test
         [Test]
         public void RepositoryAdd_Verify()
         {
+            //arrange
             var container = new AutoMoq.AutoMoqer();
             var repositoryMock = container.GetMock<IDynamoDBContext>();
             var settingMock = container.GetMock<ISettings>();
 
             settingMock.Setup(x => x.ApplicationName)
-                .Returns(Settings.Default.ApplicationName);
+                .Returns(Base.Properties.Settings.Default.ApplicationName);
             settingMock.Setup(x => x.ElmahTableName)
-                .Returns(Settings.Default.ElmahTableName);
+                .Returns(Base.Properties.Settings.Default.ElmahTableName);
 
             container.SetInstance("dummy");
 
@@ -56,18 +56,20 @@ namespace ShadowBlue.Repository.Test
             var fakeEpochId = string.Format("{0}-{1}", "123", Guid.NewGuid());
 
             var error = Builder<ElmahError>.CreateNew()
-                .With(x => x.ApplicationName = Settings.Default.ApplicationName)
+                .With(x => x.ApplicationName = Base.Properties.Settings.Default.ApplicationName)
                 .With(x => x.DateTimeId = fakeEpochId)
                 .Build();
 
+            //act
             target.Add(error);
 
+            //assert
             repositoryMock.Verify(x =>
                     x.Save(It.Is<ElmahError>(err =>
-                        error.ApplicationName == Settings.Default.ApplicationName &&
+                        error.ApplicationName == Base.Properties.Settings.Default.ApplicationName &&
                         error.DateTimeId == fakeEpochId
                     ),
-                    It.Is<DynamoDBOperationConfig>(config => config.OverrideTableName == Settings.Default.ElmahTableName)
+                    It.Is<DynamoDBOperationConfig>(config => config.OverrideTableName == Base.Properties.Settings.Default.ElmahTableName)
                 ),
                 Times.Once()
             );
@@ -76,16 +78,15 @@ namespace ShadowBlue.Repository.Test
         [Test]
         public void RepositoryAdd_VerifyAdd()
         {
+            //arrange
             var container = new AutoMoq.AutoMoqer();
-
             var settingMock = container.GetMock<ISettings>();
 
             container.SetInstance<IDynamoDBContext>(_ddb);
-
             settingMock.Setup(x => x.ApplicationName)
-                .Returns(Settings.Default.ApplicationName);
+                .Returns(Base.Properties.Settings.Default.ApplicationName);
             settingMock.Setup(x => x.ElmahTableName)
-                .Returns(Settings.Default.ElmahTableName);
+                .Returns(Base.Properties.Settings.Default.ElmahTableName);
 
             container.SetInstance("dummy");
 
@@ -94,48 +95,54 @@ namespace ShadowBlue.Repository.Test
             var fakeEpochId = string.Format("{0}-{1}", "123", Guid.NewGuid());
 
             var error = Builder<ElmahError>.CreateNew()
-                .With(x => x.ApplicationName = Settings.Default.ApplicationName)
+                .With(x => x.ApplicationName = Base.Properties.Settings.Default.ApplicationName)
                 .With(x => x.DateTimeId = fakeEpochId)
                 .Build();
 
+            //act
             target.Add(error);
 
             var results = _ddb.FromScan<ElmahError>(
                 new ScanOperationConfig(), DefaultDbOperationConfig).ToList();
 
+            //assert
             results.Single().DateTimeId.Should().Equal(fakeEpochId);
         }
 
         [Test]
         public void RepositoryDelete_Verify()
         {
+            //arrange
             var container = new AutoMoq.AutoMoqer();
             var repositoryMock = container.GetMock<IDynamoDBContext>();
             var settingMock = container.GetMock<ISettings>();
 
             settingMock.Setup(x => x.ApplicationName)
-                .Returns(Settings.Default.ApplicationName);
+                .Returns(Base.Properties.Settings.Default.ApplicationName);
             settingMock.Setup(x => x.ElmahTableName)
-                .Returns(Settings.Default.ElmahTableName);
+                .Returns(Base.Properties.Settings.Default.ElmahTableName);
 
+           
             container.SetInstance("dummy");
 
             var target = container.Resolve<DynamoDbRepository<ElmahError>>();
 
             var fakeEpochId = string.Format("{0}-{1}", "123", Guid.NewGuid());
 
+            //act
             target.Delete(fakeEpochId);
 
+            //assert
             repositoryMock.Verify(x =>
                     x.Delete<ElmahError>(
                         It.Is<string>(err =>
                             err == fakeEpochId
                         ),
                         It.Is<string>(asd =>
-                            asd == Settings.Default.ApplicationName
+                            asd == Base.Properties.Settings.Default.ApplicationName
                         ),
                         It.Is<DynamoDBOperationConfig>(config => 
-                            config.OverrideTableName == Settings.Default.ElmahTableName)
+                            config.OverrideTableName == Base.Properties.Settings.Default.ElmahTableName)
                     ),
                 Times.Once()
             );
@@ -144,14 +151,14 @@ namespace ShadowBlue.Repository.Test
         [Test]
         public void RepositoryDelete_VerifyDelete()
         {
+            //arrange
             var container = new AutoMoq.AutoMoqer();
-
             var settingMock = container.GetMock<ISettings>();
 
             settingMock.Setup(x => x.ApplicationName)
-                .Returns(Settings.Default.ApplicationName);
+                .Returns(Base.Properties.Settings.Default.ApplicationName);
             settingMock.Setup(x => x.ElmahTableName)
-                .Returns(Settings.Default.ElmahTableName);
+                .Returns(Base.Properties.Settings.Default.ElmahTableName);
 
             container.SetInstance<IDynamoDBContext>(_ddb);
             container.SetInstance("dummy");
@@ -161,17 +168,19 @@ namespace ShadowBlue.Repository.Test
             var fakeEpochId = string.Format("{0}-{1}", "123", Guid.NewGuid());
 
             var error = Builder<ElmahError>.CreateNew()
-                .With(x => x.ApplicationName = Settings.Default.ApplicationName)
+                .With(x => x.ApplicationName = Base.Properties.Settings.Default.ApplicationName)
                 .With(x => x.DateTimeId = fakeEpochId)
                 .Build();
 
             _ddb.Save(error, DefaultDbOperationConfig);
 
+            //act
             target.Delete(fakeEpochId);
 
             var results = _ddb.FromScan<ElmahError>(
                 new ScanOperationConfig(), DefaultDbOperationConfig).ToList();
 
+            //assert
             results.Count().Should().Be.LessThanOrEqualTo(0);
         }
 
@@ -183,9 +192,9 @@ namespace ShadowBlue.Repository.Test
             var settingMock = container.GetMock<ISettings>();
 
             settingMock.Setup(x => x.ApplicationName)
-                .Returns(Settings.Default.ApplicationName);
+                .Returns(Base.Properties.Settings.Default.ApplicationName);
             settingMock.Setup(x => x.ElmahTableName)
-                .Returns(Settings.Default.ElmahTableName);
+                .Returns(Base.Properties.Settings.Default.ElmahTableName);
 
             container.SetInstance("dummy");
 
@@ -201,10 +210,10 @@ namespace ShadowBlue.Repository.Test
                             err == fakeEpochId
                         ),
                          It.Is<string>(err =>
-                            err == Settings.Default.ApplicationName
+                            err == Base.Properties.Settings.Default.ApplicationName
                         ),
                         It.Is<DynamoDBOperationConfig>(config => 
-                            config.OverrideTableName == Settings.Default.ElmahTableName
+                            config.OverrideTableName == Base.Properties.Settings.Default.ElmahTableName
                         )
                 ),
                 Times.Once()
@@ -214,14 +223,14 @@ namespace ShadowBlue.Repository.Test
         [Test]
         public void RepositoryGet_VerifyGet()
         {
+            //arrange
             var container = new AutoMoq.AutoMoqer();
-
             var settingMock = container.GetMock<ISettings>();
 
             settingMock.Setup(x => x.ApplicationName)
-                .Returns(Settings.Default.ApplicationName);
+                .Returns(Base.Properties.Settings.Default.ApplicationName);
             settingMock.Setup(x => x.ElmahTableName)
-                .Returns(Settings.Default.ElmahTableName);
+                .Returns(Base.Properties.Settings.Default.ElmahTableName);
 
             container.SetInstance("dummy");
             container.SetInstance<IDynamoDBContext>(_ddb);
@@ -231,40 +240,45 @@ namespace ShadowBlue.Repository.Test
             var fakeEpochId = string.Format("{0}-{1}", "123", Guid.NewGuid());
 
             var error = Builder<ElmahError>.CreateNew()
-                .With(x => x.ApplicationName = Settings.Default.ApplicationName)
+                .With(x => x.ApplicationName = Base.Properties.Settings.Default.ApplicationName)
                 .With(x => x.DateTimeId = fakeEpochId)
                 .Build();
 
             _ddb.Save(error, DefaultDbOperationConfig);
 
+            //act
             var result = target.Get(fakeEpochId);
 
+            //assert
             result.DateTimeId.Should().Equal(fakeEpochId);
         }
 
         [Test]
         public void RepositoryGetAll_Verify()
         {
+            //arrange
             var container = new AutoMoq.AutoMoqer();
             var repositoryMock = container.GetMock<IDynamoDBContext>();
             var settingMock = container.GetMock<ISettings>();
 
             settingMock.Setup(x => x.ApplicationName)
-                .Returns(Settings.Default.ApplicationName);
+                .Returns(Base.Properties.Settings.Default.ApplicationName);
             settingMock.Setup(x => x.ElmahTableName)
-                .Returns(Settings.Default.ElmahTableName);
+                .Returns(Base.Properties.Settings.Default.ElmahTableName);
 
             container.SetInstance("dummy");
 
             var target = container.Resolve<DynamoDbRepository<ElmahError>>();
 
+            //act
             target.GetAll();
 
+            //assert
             repositoryMock.Verify(x =>
                     x.FromScan<ElmahError>(
                         It.IsAny<ScanOperationConfig>(),
                         It.Is<DynamoDBOperationConfig>(config =>
-                            config.OverrideTableName == Settings.Default.ElmahTableName
+                            config.OverrideTableName == Base.Properties.Settings.Default.ElmahTableName
                         )
                 ),
                 Times.Once()
@@ -274,12 +288,12 @@ namespace ShadowBlue.Repository.Test
         [Test]
         public void RepositoryGetAll_VerifyGetAll()
         {
+            //arrange
             var container = new AutoMoq.AutoMoqer();
-
             var settingMock = container.GetMock<ISettings>();
 
             settingMock.Setup(x => x.ElmahTableName)
-                .Returns(Settings.Default.ElmahTableName);
+                .Returns(Base.Properties.Settings.Default.ElmahTableName);
 
             container.SetInstance("dummy");
             container.SetInstance<IDynamoDBContext>(_ddb);
@@ -288,7 +302,7 @@ namespace ShadowBlue.Repository.Test
 
             var errors = Builder<ElmahError>.CreateListOfSize(3)
                 .All()
-                .With(x => x.ApplicationName = Settings.Default.ApplicationName)
+                .With(x => x.ApplicationName = Base.Properties.Settings.Default.ApplicationName)
                 .Build();
 
             foreach (var error in errors)
@@ -296,32 +310,39 @@ namespace ShadowBlue.Repository.Test
                 _ddb.Save(error, DefaultDbOperationConfig);
             }
 
-            target.GetAll().Count().Should().Equal(3);
+            //act
+            var results = target.GetAll();
+
+            //assert
+            results.Count().Should().Equal(3);
         }
 
         [Test]
         public void RepositoryGetAllWithQuery_Verify()
         {
+            //arrange
             var container = new AutoMoq.AutoMoqer();
             var repositoryMock = container.GetMock<IDynamoDBContext>();
             var settingMock = container.GetMock<ISettings>();
 
             settingMock.Setup(x => x.ApplicationName)
-                .Returns(Settings.Default.ApplicationName);
+                .Returns(Base.Properties.Settings.Default.ApplicationName);
             settingMock.Setup(x => x.ElmahTableName)
-                .Returns(Settings.Default.ElmahTableName);
+                .Returns(Base.Properties.Settings.Default.ElmahTableName);
 
             container.SetInstance("dummy");
 
             var target = container.Resolve<DynamoDbRepository<ElmahError>>();
 
+            //act
             target.GetAllWithQuery(ScanOperator.GreaterThan, It.IsAny<ConditionalOperatorValues>(), It.IsAny<object>());
 
+            //assert
             repositoryMock.Verify(x =>
                     x.Query<ElmahError>(
-                        It.Is<string>(y => y == Settings.Default.ApplicationName) ,
+                        It.Is<string>(y => y == Base.Properties.Settings.Default.ApplicationName) ,
                         It.Is<DynamoDBOperationConfig>(config =>
-                            config.OverrideTableName == Settings.Default.ElmahTableName &&
+                            config.OverrideTableName == Base.Properties.Settings.Default.ElmahTableName &&
                             config.QueryFilter.Single().Operator == ScanOperator.GreaterThan &&
                             config.QueryFilter.Single().PropertyName == "DateTimeId"
                         )
@@ -333,14 +354,14 @@ namespace ShadowBlue.Repository.Test
         [Test]
         public void RepositoryGetAllWithQuery_VerifyGetAllWithQuery()
         {
+            //arrange
             var container = new AutoMoq.AutoMoqer();
-
             var settingMock = container.GetMock<ISettings>();
 
             settingMock.Setup(x => x.ApplicationName)
-                .Returns(Settings.Default.ApplicationName);
+                .Returns(Base.Properties.Settings.Default.ApplicationName);
             settingMock.Setup(x => x.ElmahTableName)
-                .Returns(Settings.Default.ElmahTableName);
+                .Returns(Base.Properties.Settings.Default.ElmahTableName);
 
             container.SetInstance("dummy");
             container.SetInstance<IDynamoDBContext>(_ddb);
@@ -349,7 +370,7 @@ namespace ShadowBlue.Repository.Test
 
             var errors = Builder<ElmahError>.CreateListOfSize(3)
                 .All()
-                .With(x => x.ApplicationName = Settings.Default.ApplicationName)
+                .With(x => x.ApplicationName = Base.Properties.Settings.Default.ApplicationName)
                 .Build();
 
             var i = 0;
@@ -361,8 +382,10 @@ namespace ShadowBlue.Repository.Test
                 i++;
             }
 
+            //act
             var results = target.GetAllWithQuery(ScanOperator.GreaterThan, It.IsAny<ConditionalOperatorValues>(), "1");
 
+            //assert
             results.Count().Should().Equal(2);
         }
     }

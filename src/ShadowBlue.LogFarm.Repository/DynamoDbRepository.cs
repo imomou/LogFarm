@@ -1,13 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics.Contracts;
-using System.Linq;
 using System.Web.Configuration;
 using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DataModel;
 using Amazon.DynamoDBv2.DocumentModel;
 using ShadowBlue.LogFarm.Base.Properties;
 
-namespace ShadowBlue.Repository
+namespace ShadowBlue.LogFarm.Repository
 {
     public class DynamoDbRepository<T> : IRepository<T> where T : class
     {

@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ShadowBlue.Repository.Test {
+namespace ShadowBlue.LogFarm.Domain.Test {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
@@ -20,15 +20,6 @@ namespace ShadowBlue.Repository.Test {
         public static Settings Default {
             get {
                 return defaultInstance;
-            }
-        }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("ShadowBlue.Repository.Test")]
-        public string ApplicationName {
-            get {
-                return ((string)(this["ApplicationName"]));
             }
         }
         
@@ -47,6 +38,15 @@ namespace ShadowBlue.Repository.Test {
         public string EnableElmahDynamoDb {
             get {
                 return ((string)(this["EnableElmahDynamoDb"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("ShadowBlue.Domain.Test")]
+        public string ApplicationName {
+            get {
+                return ((string)(this["ApplicationName"]));
             }
         }
     }

@@ -33,9 +33,4 @@
 		>
 	</parameter>
 	
-	<parameter name="ServerRole"
-		xdt:Transform="Remove"
-		xdt:Locator="Match(name)">
-	</parameter>
-	
 </parameters>

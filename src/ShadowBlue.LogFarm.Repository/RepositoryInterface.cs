@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using Amazon.DynamoDBv2.DocumentModel;
 
-namespace ShadowBlue.Repository
+namespace ShadowBlue.LogFarm.Repository
 {
     [ContractClass(typeof(RepositoryInterface<>))]
     public interface IRepository<T> : IDisposable where T : class

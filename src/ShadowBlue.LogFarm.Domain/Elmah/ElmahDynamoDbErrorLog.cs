@@ -8,8 +8,8 @@ using Amazon.DynamoDBv2.DocumentModel;
 using Elmah;
 using NLog.Common;
 using ShadowBlue.LogFarm.Base.Properties;
-using ShadowBlue.Repository;
-using ShadowBlue.Repository.Models;
+using ShadowBlue.LogFarm.Repository;
+using ShadowBlue.LogFarm.Repository.Models;
 using ApplicationException = Elmah.ApplicationException;
 
 namespace ShadowBlue.LogFarm.Domain.Elmah
@@ -17,7 +17,7 @@ namespace ShadowBlue.LogFarm.Domain.Elmah
     /// <summary>
     /// DynamoDb error logging for Elmah
     /// </summary>
-    public class DynamoDbErrorLog : ErrorLog
+    public class ElmahDynamoDbErrorLog : ErrorLog
     {
         private static readonly Dictionary<string, string> Keys = new Dictionary<string, string>();
         private static readonly DateTime UnixEpoch = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
@@ -26,7 +26,7 @@ namespace ShadowBlue.LogFarm.Domain.Elmah
         private readonly string[] _unwantedChars = {".", "."};
         private const int MaxAppNameLength = 60;
         
-        public DynamoDbErrorLog(IDictionary config)
+        public ElmahDynamoDbErrorLog(IDictionary config)
         {
             if (config == null)
                 throw new ArgumentException("config is null");
@@ -54,13 +54,15 @@ namespace ShadowBlue.LogFarm.Domain.Elmah
             _repository = new DynamoDbRepository<ElmahError>(Settings.Default, _applicationName);
         }
 
-        public DynamoDbErrorLog(IDictionary config, IRepository<ElmahError> repository)
+        public ElmahDynamoDbErrorLog(IDictionary config, IRepository<ElmahError> repository)
         {
             if (config == null)
                 throw new ArgumentException("config is null");
 
             ApplicationName = (string)config["ddbAppName"] ?? string.Empty;
             Environment = (string)config["environment"] ?? string.Empty;
+
+            _applicationName = ApplicationName;
 
             _repository = repository;
         }
@@ -122,25 +124,23 @@ namespace ShadowBlue.LogFarm.Domain.Elmah
                 throw new ArgumentOutOfRangeException("pageSize", pageSize, null);
 
             IEnumerable<ElmahError> items = null;
-            if (pageIndex > 0)
+            if (pageIndex > 0 && Keys.Any())
             {
-                var prevIndexKey = string.Format("{0}-{1}", pageSize, pageIndex - 1);
+                //var prevIndexKey = string.Format("{0}-{1}", pageSize, pageIndex - 1);
+                var prevIndexKey = string.Format("{0}-{1}", pageSize, pageIndex);
                 var prevQueryKey = Keys.Keys
                     .Where(a => a.StartsWith(pageSize.ToString()))
-                    .Where(a => string.CompareOrdinal(a, prevIndexKey) <= 0)
-                    .OrderByDescending(a => a)
-                    .FirstOrDefault();
+                    .FirstOrDefault(a => string.CompareOrdinal(a, prevIndexKey) <= 0);
                 if (prevQueryKey != null)
                     items = _repository.GetAllWithQuery(ScanOperator.GreaterThan, null, Keys[prevQueryKey]);
             }
             else
             {
                 items = _repository
-                    .GetAll()
-                    .OrderByDescending(a => a);
+                    .GetAll();
             }
 
-            var elmahErrors = items == null ? 
+            var elmahErrors = items != null ? 
                 items.ToList() : 
                 new List<ElmahError>();
  

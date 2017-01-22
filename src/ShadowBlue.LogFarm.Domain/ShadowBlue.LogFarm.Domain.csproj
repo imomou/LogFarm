@@ -61,6 +61,9 @@
       <HintPath>..\packages\elmah.corelibrary.1.2.2\lib\Elmah.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Microsoft.QualityTools.Testing.Fakes, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
     <Reference Include="NLog">
       <HintPath>..\packages\NLog.3.0.0.0\lib\net45\NLog.dll</HintPath>
     </Reference>
@@ -81,8 +84,13 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
-    <None Include="packages.config" />
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
+    <Fakes Include="Fakes\ShadowBlue.LogFarm.Repository.fakes" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Elmah\App_Readme\Elmah.txt" />
@@ -92,10 +100,13 @@
       <Project>{9292ca13-33a7-412d-8358-096d40a17922}</Project>
       <Name>ShadowBlue.LogFarm.Base</Name>
     </ProjectReference>
-    <ProjectReference Include="..\ShadowBlue.Repository\ShadowBlue.Repository.csproj">
-      <Project>{80CB5B4D-2DB1-4AD8-B6D7-26BB15BD269D}</Project>
-      <Name>ShadowBlue.Repository</Name>
+    <ProjectReference Include="..\ShadowBlue.LogFarm.Repository\ShadowBlue.LogFarm.Repository.csproj">
+      <Project>{80cb5b4d-2db1-4ad8-b6d7-26bb15bd269d}</Project>
+      <Name>ShadowBlue.LogFarm.Repository</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />

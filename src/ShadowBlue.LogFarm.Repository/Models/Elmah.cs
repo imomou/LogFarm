@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Amazon.DynamoDBv2.DataModel;
 
-namespace ShadowBlue.Repository.Models
+namespace ShadowBlue.LogFarm.Repository.Models
 {
     [DynamoDBTable("Elmah")]
     public class ElmahError //: IError

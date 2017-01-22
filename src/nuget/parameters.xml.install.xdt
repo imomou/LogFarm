@@ -11,7 +11,7 @@
 			name="EnvironmentDdb"
 			kind="XmlFile"
 			scope="obj\\Release\\Package\\PackageTmp\\Web\.config$"
-			match="/configuration/elmah/errorLog[@type='PacDig.Forensic.Repository.DynamoDb.DynamoDbErrorLog, PacDig.Forensic.Repository']/@environment"
+			match="/configuration/elmah/errorLog[@type='ShadowBlue.LogFarm.Domain.Elmah.ElmahDynamoDbErrorLog, ShadowBlue.LogFarm.Domain.Elmah']/@environment"
 		/>
 		<parameterEntry
 			name="EnvironmentDbLogger"
@@ -44,7 +44,7 @@
 			name="AppDbb"
 			kind="XmlFile"
 			scope="obj\\Release\\Package\\PackageTmp\\Web\.config$"
-			match="/configuration/elmah/errorLog[@type='PacDig.Forensic.Repository.DynamoDb.DynamoDbErrorLog, PacDig.Forensic.Repository']/@ddbAppName" 
+			match="/configuration/elmah/errorLog[@type='ShadowBlue.LogFarm.Domain.Elmah.ElmahDynamoDbErrorLog, ShadowBlue.LogFarm.Domain.Elmah']/@ddbAppName" 
 		/>
 		<parameterEntry
 			name="AppLogger"
@@ -76,7 +76,7 @@
 		<parameterEntry
 			kind="XmlFile"
 			scope="obj\\Release\\Package\\PackageTmp\\Web\.config$"
-			match="/configuration/elmah/errorLog[@type='PacDig.Forensic.Repository.DynamoDb.DynamoDbErrorLog, PacDig.Forensic.Repository']/@ddbTableName" 
+			match="/configuration/elmah/errorLog[@type='ShadowBlue.LogFarm.Domain.Elmah.ElmahDynamoDbErrorLog, ShadowBlue.LogFarm.Domain.Elmah']/@ddbTableName" 
 		/>
 	</parameter>
 
