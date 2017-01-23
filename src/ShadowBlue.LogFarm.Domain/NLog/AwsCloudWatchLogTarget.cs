@@ -36,13 +36,12 @@ namespace ShadowBlue.LogFarm.Domain.NLog
         {
             base.InitializeTarget();
 
-            var regionConfig = WebConfigurationManager.AppSettings["AWSRegion"] ??
-                               "us-west-1";
+            var regionConfig = WebConfigurationManager.AppSettings["AWSRegion"] ?? "us-west-1";
 
             var region = RegionEndpoint.GetBySystemName(regionConfig);
             var awsClient = new AmazonCloudWatchLogsClient(region);
-            var logstream = !string.IsNullOrEmpty(EC2Metadata.InstanceId)
-                ? string.Format("{0}-{1}-{2}", LogStreaam, Environment, EC2Metadata.InstanceId)
+            var logstream = !string.IsNullOrEmpty(Amazon.Util.EC2InstanceMetadata.InstanceId)
+                ? string.Format("{0}-{1}-{2}", LogStreaam, Environment, Amazon.Util.EC2InstanceMetadata.InstanceId)
                 : string.Format("{0}-{1}", LogStreaam, Environment);
 
             InternalLogger.Debug("Writing LogStream", logstream);

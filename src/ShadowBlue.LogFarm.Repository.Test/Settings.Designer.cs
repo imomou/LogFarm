@@ -40,14 +40,5 @@ namespace ShadowBlue.LogFarm.Repository.Test {
                 return ((string)(this["ElmahTableName"]));
             }
         }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string EnableElmahDynamoDb {
-            get {
-                return ((string)(this["EnableElmahDynamoDb"]));
-            }
-        }
     }
 }

@@ -7,7 +7,6 @@ using System.Linq;
 using Amazon.DynamoDBv2.DocumentModel;
 using Elmah;
 using NLog.Common;
-using ShadowBlue.LogFarm.Base.Properties;
 using ShadowBlue.LogFarm.Repository;
 using ShadowBlue.LogFarm.Repository.Models;
 using ApplicationException = Elmah.ApplicationException;
@@ -38,15 +37,13 @@ namespace ShadowBlue.LogFarm.Domain.Elmah
             if (ApplicationName.Length > MaxAppNameLength)
             {
                 throw new ApplicationException(string.Format(
-                    "Application name is too long. Maximum length allowed is {0} characters.",
-                    MaxAppNameLength.ToString("N0")));
+                    "Application name is too long. Maximum length allowed is {0:N0} characters.", MaxAppNameLength));
             }
 
             if (Environment.Length > MaxAppNameLength)
             {
                 throw new ApplicationException(string.Format(
-                    "Application name is too long. Maximum length allowed is {0} characters.",
-                    MaxAppNameLength.ToString("N0")));
+                    "Application name is too long. Maximum length allowed is {0:N0} characters.", MaxAppNameLength));
             }
 
             var applcationName = string.Format("{0}-{1}", ApplicationName, Environment);
@@ -64,7 +61,6 @@ namespace ShadowBlue.LogFarm.Domain.Elmah
             Environment = (string)config["environment"] ?? string.Empty;
 
             _applicationName = ApplicationName;
-
             _repository = repository;
         }
 
