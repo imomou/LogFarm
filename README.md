@@ -20,6 +20,8 @@ For the reason to me most log events and exceptions is not going to be useful du
 
 ###Enable Elmah 
 
+Inside Web.config, put below errorLog inside the elmah section
+
 ```xml
  <configuration>
   .
@@ -51,4 +53,12 @@ Inside the NLog.Config, specify "cloudwatchlog" in writeTo
 
 
 Simply run Deploy-Infrastructure.ps1 powershell script at [base-infrastructure](https://github.com/imomou/LogFarm/tree/master/base-infrastructure"), make sure to grab Deployment.ps1 as well with template. And please provide an existing S3 Bucket ( ATM, it doesn't make sense for LogFarm to have a bucket entirely for itself ) 
+
+
+###LogFarm TODO
+
+* Profiling, MiniProfiler, Glimpse (still evaluating )
+* Support for .Net Core
+* Intergration with Kinsis ( AWS Lambda or Docker )
+
 
