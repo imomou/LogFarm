@@ -14,7 +14,7 @@ To add LogFarm to your Visual Studio project, run the following command in Packa
 
 # Configuration
  
-LogFarm by default, it is configured not to write to AWS, it's only going to be enabled when build set to release mode (Web.release.config). For the reason, to me most log events and exceptions is not going to be useful during local development. However user can still choose to enable it by following instructions
+LogFarm by default, it is configured not to write to AWS, it's only going to be enabled when build with release mode, which trigger Web.release.config transformation that contains LogFarm references. For the reason to me most log events and exceptions often not useful during local development. However user can still choose to enable it by following instructions
 
 
 ###Enable Elmah 
