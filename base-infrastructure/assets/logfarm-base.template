@@ -1,7 +1,7 @@
 {
 	"AWSTemplateFormatVersion" : "2010-09-09",
 
-	"Description" : "Create EC2 instance with WebServer having EBS",
+	"Description" : "Create DynamoDb table to store Elmah Logs and CloudWatch for Nlog",
 
 	"Parameters" : {
 
@@ -16,19 +16,18 @@
 			"Type" : "String",
 			"Default" : "Elmah"
 		},
-		"MiniProfilerTableName":
-		{
-			"Description": "Name of Elmah table will be created in DynamoDb",
-			"Type" : "String",
-			"Default" : "MiniProfiler" 
-		},
 		"IsSubscribed" : {
-			"Description": "Hostname of Elasticsearch [elasticsearch.outputs.EsElb]",
+			"Description": "Logevents to be delivered to AWS Kinesis Stream",
 			"Type": "String",
             "AllowedValues": ["subscribe", "unsubscribe"],
             "Default": "unsubscribe"
+		},
+		"ReadWriteCapacityUnits" : {
+			"Description": "Name of Elmah table will be created in DynamoDb",
+			"Type" : "String",
+			"Default" : "1"
 		}
-	},
+	},	
 
 	"Conditions" : {
         "Subscribe" : {"Fn::Equals" : [{"Ref" : "IsSubscribed"}, "subscribe"]}
@@ -56,8 +55,8 @@
 				}
 			],
 			"ProvisionedThroughput" : {
-				"ReadCapacityUnits" : "1",
-				"WriteCapacityUnits" : "1"
+				"ReadCapacityUnits" : { "Ref": "ReadWriteCapacityUnits" },
+				"WriteCapacityUnits" : { "Ref": "ReadWriteCapacityUnits" }
 			},
 			"TableName" :  { "Ref" : "ElmahTableName" },
 			"GlobalSecondaryIndexes" : [
@@ -77,55 +76,8 @@
 						"ProjectionType" : "ALL"
 					},
 					"ProvisionedThroughput" : {
-						"ReadCapacityUnits" : "1",
-						"WriteCapacityUnits" : "1"
-					}
-				}
-			]}
-		},
-		"MiniProfiler" : {
-			"Type" : "AWS::DynamoDB::Table",
-			"Properties" : {
-			"AttributeDefinitions" : [
-				{
-					"AttributeName" : "DateTimeId",
-					"AttributeType" : "S"   
-				},
-				{
-					"AttributeName" : "ApplicationName",
-					"AttributeType" : "S"   
-				}
-			],
-			"KeySchema" : [
-				{
-					"AttributeName" : "DateTimeId",
-					"KeyType" : "HASH"
-				}
-			],
-			"ProvisionedThroughput" : {
-				"ReadCapacityUnits" : "1",
-				"WriteCapacityUnits" : "1"
-			},
-			"TableName" : { "Ref" : "MiniProfilerTableName" },
-			"GlobalSecondaryIndexes" : [
-				{
-					"IndexName" : "ApplicationName-DateTimeId-Index",
-					"KeySchema" : [
-						{
-							"AttributeName" : "ApplicationName",
-							"KeyType" : "HASH"
-						},
-						{
-							"AttributeName" : "DateTimeId",
-							"KeyType" : "RANGE"
-						}
-					],                         
-					"Projection" : {
-						"ProjectionType" : "ALL"
-					},
-					"ProvisionedThroughput" : {
-						"ReadCapacityUnits" : "1",
-						"WriteCapacityUnits" : "1"
+						"ReadCapacityUnits" : { "Ref": "ReadWriteCapacityUnits" },
+						"WriteCapacityUnits" : { "Ref": "ReadWriteCapacityUnits" }
 					}
 				}
 			]}
@@ -144,25 +96,11 @@
 				"RoleArn" : { "Fn::GetAtt" : [ "LogStreamRole", "Arn" ] }
 			}
 		},
-		"Log4NetGroup" : {
-			"Type": "AWS::Logs::LogGroup"
-		},
-		"Log4NetGroupSub" : {
-			"DependsOn" : ["LogStream", "LogStreamRole", "LogStreamRolePolicy"],
-			"Type" : "AWS::Logs::SubscriptionFilter",
-            "Condition" : "Subscribe",
-			"Properties" : {
-				"DestinationArn" : { "Fn::GetAtt" : ["LogStream","Arn"] },
-				"FilterPattern" : "",
-				"LogGroupName" : {"Ref":"Log4NetGroup"},
-				"RoleArn" : { "Fn::GetAtt" : [ "LogStreamRole", "Arn" ] }
-			}
-		},
-		"ForensicsMp" : {
+		"LogFarmMp" : {
 			"Type": "AWS::IAM::ManagedPolicy",
 			"Properties": {
-				"Description" : "Permission for forensics related services.",
-				"Path" : "/generic/forensics/",
+				"Description" : "Permission for LogFarm related services.",
+				"Path" : "/generic/logfarm/",
 				"PolicyDocument" : {
 					"Version":"2012-10-17", 
 					"Statement" : [
@@ -175,12 +113,6 @@
                             ],     
                             "Resource": [
 								{"Fn::Join" : ["", [
-									"arn:aws:logs:*:*:", {"Ref": "Log4NetGroup"}
-								]]},
-								{"Fn::Join" : ["", [
-									"arn:aws:logs:*:*:", {"Ref": "Log4NetGroup"}, ":log-stream:*"
-								]]},
-								{"Fn::Join" : ["", [
 									"arn:aws:logs:*:*:", {"Ref": "NLogGroup"}
 								]]},
 								{"Fn::Join" : ["", [
@@ -190,20 +122,7 @@
 						},
 						{
 							"Action": [
-								"dynamodb:BatchGetItem",
-								"dynamodb:BatchWriteItem",
-								"dynamodb:DeleteItem",
-								"dynamodb:DescribeStream",
-								"dynamodb:DescribeTable",
-								"dynamodb:GetItem",
-								"dynamodb:GetRecords",
-								"dynamodb:GetShardIterator",
-								"dynamodb:ListStreams",
-								"dynamodb:ListTables",
-								"dynamodb:PutItem",
-								"dynamodb:Query",
-								"dynamodb:Scan",
-								"dynamodb:UpdateItem"
+								"dynamodb:*"
 							],
 							"Effect": "Allow",
 							"Resource": [
@@ -283,6 +202,5 @@
 		}
 	},
 	"Outputs" : {
-
 	}
 }
