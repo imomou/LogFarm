@@ -84,3 +84,8 @@ Logfarm use Kaiseki for CI/CD, it provides very consistent manner dealing with b
 * Intergration with Kinesis ( AWS Lambda or Docker )
 
 
+For anything questions or issues please don't hesistate to contact me at ko.sam.wang@gmail.com . All suggestions are welcome! 
+Happy Logging! 
+
+
+
