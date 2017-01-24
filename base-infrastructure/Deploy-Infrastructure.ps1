@@ -1,7 +1,7 @@
 ﻿param(
-    $environment = (Read-Host 'Environment'),
-    $ElmahTableName = (Read-Host 'Name of Elmah Table'),
-    $Bucket = (Read-Host 'Name of the S3 bucket to store template'),
+	$environment = (Read-Host 'Environment'),
+	$ElmahTableName = (Read-Host 'Name of Elmah Table'),
+	$Bucket = (Read-Host 'Name of the S3 bucket to store template'),
 	$ProjectName = (Read-Host 'Name of the Project')
 )
 
