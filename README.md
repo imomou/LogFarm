@@ -73,7 +73,7 @@ Simply run Deploy-Infrastructure.ps1 powershell script at [base-infrastructure](
 
 ###Deployments
 
-Logfarm use Kaiseki for CI/CD, it provides very consistent manner dealing with build,test and packaging. I strongely recommend using it along with LogFarm. Furthermore, by default it provided a lot of configuration required for dealing with CI/CD, so all you and the team need to is simply run build.ps1 and then deploy with running WebDeploy.ps1 and specify which config.xml to use e.g WebDeploy.ps1 ... env Site.SetParameters.Prod
+Logfarm use Kaiseki for CI/CD, it provides very consistent manner dealing with build,test and packaging. I strongely recommend using it along with LogFarm. Furthermore, by default it provided a lot of configuration required for dealing with CI/CD, so all you and the team need to is simply run build.ps1 and then deploy by running WebDeploy.ps1 and specify which config.xml to use e.g WebDeploy.ps1 ... env Site.SetParameters.Prod
 
 [Kaiseki](https://github.com/SleeperSmith/Kaiseki)
 
