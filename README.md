@@ -64,7 +64,7 @@ And provide configuration parameter in NLog.Params.Config
             value="AWSLogGroupName" />
 </nlog>
 
-```xml
+```
 
 ###Provision Resources requires for LogFarm 
 
