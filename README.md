@@ -79,8 +79,8 @@ Logfarm use Kaiseki for CI/CD, it provides very consistent manner dealing with b
 
 ###LogFarm TODO
 
-* Profiling, MiniProfiler, Glimpse (still evaluating )
+* Application profiling such as MiniProfiler, Glimpse (still evaluating )
 * Support for .Net Core
-* Intergration with Kinsis ( AWS Lambda or Docker )
+* Intergration with Kinesis ( AWS Lambda or Docker )
 
 
