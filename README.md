@@ -66,7 +66,7 @@ And provide configuration parameter in NLog.Params.Config
 
 ```
 
-###Provision Resources requires for LogFarm 
+###Provision Resources require for LogFarm 
 
 
 Simply run Deploy-Infrastructure.ps1 powershell script at [base-infrastructure](https://github.com/imomou/LogFarm/tree/master/base-infrastructure"), make sure to grab Deployment.ps1 as well with template. And please provide an existing S3 Bucket ( ATM, it doesn't make sense for LogFarm to have a bucket entirely for itself ) 
