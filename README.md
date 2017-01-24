@@ -48,6 +48,24 @@ Inside the NLog.Config, specify "cloudwatchlog" in writeTo
  </nlog>
 ```
 
+And provide configuration parameter in NLog.Params.Config
+
+```xml
+
+<?xml version="1.0" encoding="utf-8" ?>
+<nlog>
+  <variable name="Environment"
+            value="Local" />
+  <variable name="ApplicationName"
+            value="" />
+  <variable name="LogPath"
+            value="${basedir}/App_Data/nlog/" />
+  <variable name="LogGroup"
+            value="AWSLogGroupName" />
+</nlog>
+
+```xml
+
 ###Provision Resources requires for LogFarm 
 
 
