@@ -20,9 +20,11 @@ For the reason to me most log events and exceptions is not going to be useful du
 
 ###Enable ELmah 
 
+<code>
  <configuration>
    <elmah>
      <errorLog type="ShadowBlue.LogFarm.Domain.Elmah.ElmahDynamoDbErrorLog, ShadowBlue.LogFarm.Domain"
        ddbAppName="$rootnamespace$" ddbTableName="elmah-dev" ddbEnvironment="local"  />
    </elmah>
  </configuration>
+</code>
