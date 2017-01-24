@@ -50,5 +50,5 @@ Inside the NLog.Config, specify "cloudwatchlog" in writeTo
 ###Provision Resources requires for LogFarm 
 
 <code>
-  Simple run Deploy-Infrastructure.ps1 powershell script at [CloudFormationTemplate](https://github.com/imomou/LogFarm/tree/master/base-infrastructure")
+  Simple run Deploy-Infrastructure.ps1 powershell script at [base-infrastructure](https://github.com/imomou/LogFarm/tree/master/base-infrastructure"), make sure to grab Deployment.ps1 as well with template. And please create provide an existing S3 Bucket
 </code>
