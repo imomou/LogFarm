@@ -18,7 +18,7 @@ LogFarm by default, it is configured not to write to AWS, it's only going to be 
 For the reason to me most log events and exceptions is not going to be useful during local development. However a user can still choose enable it by following instructions
 
 
-###Enable ELmah 
+###Enable Elmah 
 
 ```xml
  <configuration>
@@ -30,4 +30,19 @@ For the reason to me most log events and exceptions is not going to be useful du
        ddbAppName="ChangeMe" ddbTableName="elmah-dev" ddbEnvironment="local"  />
    </elmah>
  </configuration>
+```
+###Enable NLog CloudWatchLog
+
+Inside the NLog.Config, specify "cloudwatchlog" in writeTo
+
+```xml
+ </nLog>
+  .
+  .
+  .
+  </targets>
+  <rules>
+    <logger name="*" minlevel="Info" writeTo="jsonFile,cloudwatchlog" />
+  </rules>
+ </nlog>
 ```
