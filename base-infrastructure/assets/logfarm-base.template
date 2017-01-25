@@ -1,206 +1,309 @@
-{
-	"AWSTemplateFormatVersion" : "2010-09-09",
-
-	"Description" : "Create DynamoDb table to store Elmah Logs and CloudWatch for Nlog",
-
-	"Parameters" : {
-
-		"KeyPairName" : {
-			"Description" : "Name of an existing EC2 KeyPair to enable SSH access to the instances",
-			"Type" : "AWS::EC2::KeyPair::KeyName",
-			"Default" : "none-prod"
-		},
-		"ElmahTableName":
-		{
-			"Description": "Name of Elmah table will be created in DynamoDb",
-			"Type" : "String",
-			"Default" : "Elmah"
-		},
-		"IsSubscribed" : {
-			"Description": "Logevents to be delivered to AWS Kinesis Stream",
-			"Type": "String",
-            "AllowedValues": ["subscribe", "unsubscribe"],
-            "Default": "unsubscribe"
-		},
-		"ReadWriteCapacityUnits" : {
-			"Description": "Name of Elmah table will be created in DynamoDb",
-			"Type" : "String",
-			"Default" : "1"
-		}
-	},	
-
-	"Conditions" : {
-        "Subscribe" : {"Fn::Equals" : [{"Ref" : "IsSubscribed"}, "subscribe"]}
-    },
-
-	"Resources" : {
-		"ElmahTable" : {
-			"Type" : "AWS::DynamoDB::Table",
-			"Properties" : {
-			"AttributeDefinitions" : [
-				{
-					"AttributeName" : "DateTimeId",
-					"AttributeType" : "S"   
-				},
-				{
-					"AttributeName" : "ApplicationName",
-					"AttributeType" : "S"   
-				}
-			],
-			"StreamSpecification" : { "StreamViewType" : "NEW_IMAGE"},
-			"KeySchema" : [
-				{
-					"AttributeName" : "DateTimeId",
-					"KeyType" : "HASH"
-				}
-			],
-			"ProvisionedThroughput" : {
-				"ReadCapacityUnits" : { "Ref": "ReadWriteCapacityUnits" },
-				"WriteCapacityUnits" : { "Ref": "ReadWriteCapacityUnits" }
-			},
-			"TableName" :  { "Ref" : "ElmahTableName" },
-			"GlobalSecondaryIndexes" : [
-				{
-					"IndexName" : "ApplicationName-DateTimeId-Index",
-					"KeySchema" : [
-						{
-							"AttributeName" : "ApplicationName",
-							"KeyType" : "HASH"
-						},
-						{
-							"AttributeName" : "DateTimeId",
-							"KeyType" : "RANGE"
-						}
-					],                         
-					"Projection" : {
-						"ProjectionType" : "ALL"
-					},
-					"ProvisionedThroughput" : {
-						"ReadCapacityUnits" : { "Ref": "ReadWriteCapacityUnits" },
-						"WriteCapacityUnits" : { "Ref": "ReadWriteCapacityUnits" }
-					}
-				}
-			]}
-		},
-		"NLogGroup" : {
-			"Type": "AWS::Logs::LogGroup"
-		},
-		"NLogGroupCSub" : {
-			"DependsOn" : ["LogStream", "LogStreamRole", "LogStreamRolePolicy"],
-			"Type" : "AWS::Logs::SubscriptionFilter",
-            "Condition" : "Subscribe",
-			"Properties" : {
-				"DestinationArn" : { "Fn::GetAtt" : ["LogStream","Arn"] },
-				"FilterPattern" : "",
-				"LogGroupName" : {"Ref":"NLogGroup"},
-				"RoleArn" : { "Fn::GetAtt" : [ "LogStreamRole", "Arn" ] }
-			}
-		},
-		"LogFarmMp" : {
-			"Type": "AWS::IAM::ManagedPolicy",
-			"Properties": {
-				"Description" : "Permission for LogFarm related services.",
-				"Path" : "/generic/logfarm/",
-				"PolicyDocument" : {
-					"Version":"2012-10-17", 
-					"Statement" : [
-						{
-							"Effect": "Allow",
-                            "Action": [
-                                "logs:*",
-								"logs:CreateLogStream",
-								"logs:DescribeLogStreams"
-                            ],     
-                            "Resource": [
-								{"Fn::Join" : ["", [
-									"arn:aws:logs:*:*:", {"Ref": "NLogGroup"}
-								]]},
-								{"Fn::Join" : ["", [
-									"arn:aws:logs:*:*:", {"Ref": "NLogGroup"}, ":log-stream:*"
-								]]}
-                            ]
-						},
-						{
-							"Action": [
-								"dynamodb:*"
-							],
-							"Effect": "Allow",
-							"Resource": [
-								{"Fn::Join" : ["", [
-									"arn:aws:dynamodb:*:*:table/",  {"Ref": "ElmahTable"}
-								]]},
-								{"Fn::Join" : ["", [
-									"arn:aws:dynamodb:*:*:table/",  {"Ref": "ElmahTable"}, "/index/*"
-								]]}
-                            ]
-						},
-						{
-							"Effect": "Allow",
-							"Action": [
-							        "cloudwatch:DescribeAlarmHistory",
-									"cloudwatch:DescribeAlarms",
-									"cloudwatch:DescribeAlarmsForMetric",
-									"cloudwatch:GetMetricData",
-									"cloudwatch:GetMetricStatistics",
-									"cloudwatch:PutMetricData",
-									"cloudwatch:SetAlarmState"
-							],
-							"Resource": [
-								"*"
-							]
-						}
-					]
-				}
-			}
-		},
-		"LogStream" : {
-			"Type" : "AWS::Kinesis::Stream",
-			"Properties" : {
-				"ShardCount" : 1
-			}
-		},
-		"LogStreamRole" : {
-			"Type": "AWS::IAM::Role",
-			"Properties": {
-				"AssumeRolePolicyDocument" : {
-					"Version": "2012-10-17",
-					"Statement": [{
-						"Effect": "Allow",
-						"Principal": { 
-							"Service": { "Fn::Join": ["", [
-								"logs.", { "Ref": "AWS::Region" } ,".amazonaws.com"
-							]]}
-						},
-						"Action": "sts:AssumeRole"
-					}]
-				}
-			}
-		},
-		"LogStreamRolePolicy": {
-			"Type": "AWS::IAM::Policy",
-			"Properties": {
-				"PolicyName": "KinesisPutRecordPolicy",
-				"Roles": [ { "Ref": "LogStreamRole" } ],
-				"PolicyDocument": {
-					"Version": "2012-10-17",
-					"Statement": [
-						{
-							"Effect": "Allow",
-							"Action": "kinesis:PutRecord",
-							"Resource": { "Fn::GetAtt" : ["LogStream","Arn"] }
-						},
-						{
-							"Effect": "Allow",
-							"Action": "iam:PassRole",
-							"Resource": { "Fn::Join" : ["", [
-								"arn:aws:iam::", { "Ref": "AWS::AccountId" }, ":role/", { "Ref": "LogStreamRole" }
-							]]}
-						}
-					]
-				}
-			}
-		}
-	},
-	"Outputs" : {
-	}
+{  
+   "AWSTemplateFormatVersion":"2010-09-09",
+   
+   "Description":"Create DynamoDb table to store Elmah Logs and CloudWatch for Nlog",
+   
+   "Parameters":{  
+      "KeyPairName":{  
+         "Description":"Name of an existing EC2 KeyPair to enable SSH access to the instances",
+         "Type":"AWS::EC2::KeyPair::KeyName",
+         "Default":"none-prod"
+      },
+      "ElmahTableName":{  
+         "Description":"Name of Elmah table will be created in DynamoDb",
+         "Type":"String",
+         "Default":"Elmah"
+      },
+      "IsSubscribed":{  
+         "Description":"Logevents to be delivered to AWS Kinesis Stream",
+         "Type":"String",
+         "AllowedValues":[  
+            "subscribe",
+            "unsubscribe"
+         ],
+         "Default":"unsubscribe"
+      },
+      "ReadWriteCapacityUnits":{  
+         "Description":"Name of Elmah table will be created in DynamoDb",
+         "Type":"String",
+         "Default":"1"
+      }
+   },
+   "Conditions":{  
+      "Subscribe":{  
+         "Fn::Equals":[  
+            {  
+               "Ref":"IsSubscribed"
+            },
+            "subscribe"
+         ]
+      }
+   },
+   
+   "Resources":{  
+      "ElmahTable":{  
+         "Type":"AWS::DynamoDB::Table",
+         "Properties":{  
+            "AttributeDefinitions":[  
+               {  
+                  "AttributeName":"DateTimeId",
+                  "AttributeType":"S"
+               },
+               {  
+                  "AttributeName":"ApplicationName",
+                  "AttributeType":"S"
+               }
+            ],
+            "StreamSpecification":{  
+               "StreamViewType":"NEW_IMAGE"
+            },
+            "KeySchema":[  
+               {  
+                  "AttributeName":"DateTimeId",
+                  "KeyType":"HASH"
+               }
+            ],
+            "ProvisionedThroughput":{  
+               "ReadCapacityUnits":{  
+                  "Ref":"ReadWriteCapacityUnits"
+               },
+               "WriteCapacityUnits":{  
+                  "Ref":"ReadWriteCapacityUnits"
+               }
+            },
+            "TableName":{  
+               "Ref":"ElmahTableName"
+            },
+            "GlobalSecondaryIndexes":[  
+               {  
+                  "IndexName":"ApplicationName-DateTimeId-Index",
+                  "KeySchema":[  
+                     {  
+                        "AttributeName":"ApplicationName",
+                        "KeyType":"HASH"
+                     },
+                     {  
+                        "AttributeName":"DateTimeId",
+                        "KeyType":"RANGE"
+                     }
+                  ],
+                  "Projection":{  
+                     "ProjectionType":"ALL"
+                  },
+                  "ProvisionedThroughput":{  
+                     "ReadCapacityUnits":{  
+                        "Ref":"ReadWriteCapacityUnits"
+                     },
+                     "WriteCapacityUnits":{  
+                        "Ref":"ReadWriteCapacityUnits"
+                     }
+                  }
+               }
+            ]
+         }
+      },
+      "NLogGroup":{  
+         "Type":"AWS::Logs::LogGroup"
+      },
+      "NLogGroupCSub":{  
+         "DependsOn":[  
+            "LogStream",
+            "LogStreamRole",
+            "LogStreamRolePolicy"
+         ],
+         "Type":"AWS::Logs::SubscriptionFilter",
+         "Condition":"Subscribe",
+         "Properties":{  
+            "DestinationArn":{  
+               "Fn::GetAtt":[  
+                  "LogStream",
+                  "Arn"
+               ]
+            },
+            "FilterPattern":"",
+            "LogGroupName":{  
+               "Ref":"NLogGroup"
+            },
+            "RoleArn":{  
+               "Fn::GetAtt":[  
+                  "LogStreamRole",
+                  "Arn"
+               ]
+            }
+         }
+      },
+      "LogFarmMp":{  
+         "Type":"AWS::IAM::ManagedPolicy",
+         "Properties":{  
+            "Description":"Permission for LogFarm related services.",
+            "Path":"/generic/logfarm/",
+            "PolicyDocument":{  
+               "Version":"2012-10-17",
+               "Statement":[  
+                  {  
+                     "Effect":"Allow",
+                     "Action":[  
+                        "logs:*",
+                        "logs:CreateLogStream",
+                        "logs:DescribeLogStreams"
+                     ],
+                     "Resource":[  
+                        {  
+                           "Fn::Join":[  
+                              "",
+                              [  
+                                 "arn:aws:logs:*:*:",
+                                 {  
+                                    "Ref":"NLogGroup"
+                                 }
+                              ]
+                           ]
+                        },
+                        {  
+                           "Fn::Join":[  
+                              "",
+                              [  
+                                 "arn:aws:logs:*:*:",
+                                 {  
+                                    "Ref":"NLogGroup"
+                                 },
+                                 ":log-stream:*"
+                              ]
+                           ]
+                        }
+                     ]
+                  },
+                  {  
+                     "Action":[  
+                        "dynamodb:*"
+                     ],
+                     "Effect":"Allow",
+                     "Resource":[  
+                        {  
+                           "Fn::Join":[  
+                              "",
+                              [  
+                                 "arn:aws:dynamodb:*:*:table/",
+                                 {  
+                                    "Ref":"ElmahTable"
+                                 }
+                              ]
+                           ]
+                        },
+                        {  
+                           "Fn::Join":[  
+                              "",
+                              [  
+                                 "arn:aws:dynamodb:*:*:table/",
+                                 {  
+                                    "Ref":"ElmahTable"
+                                 },
+                                 "/index/*"
+                              ]
+                           ]
+                        }
+                     ]
+                  },
+                  {  
+                     "Effect":"Allow",
+                     "Action":[  
+                        "cloudwatch:DescribeAlarmHistory",
+                        "cloudwatch:DescribeAlarms",
+                        "cloudwatch:DescribeAlarmsForMetric",
+                        "cloudwatch:GetMetricData",
+                        "cloudwatch:GetMetricStatistics",
+                        "cloudwatch:PutMetricData",
+                        "cloudwatch:SetAlarmState"
+                     ],
+                     "Resource":[  
+                        "*"
+                     ]
+                  }
+               ]
+            }
+         }
+      },
+      "LogStream":{  
+         "Type":"AWS::Kinesis::Stream",
+         "Properties":{  
+            "ShardCount":1
+         }
+      },
+      "LogStreamRole":{  
+         "Type":"AWS::IAM::Role",
+         "Properties":{  
+            "AssumeRolePolicyDocument":{  
+               "Version":"2012-10-17",
+               "Statement":[  
+                  {  
+                     "Effect":"Allow",
+                     "Principal":{  
+                        "Service":{  
+                           "Fn::Join":[  
+                              "",
+                              [  
+                                 "logs.",
+                                 {  
+                                    "Ref":"AWS::Region"
+                                 },
+                                 ".amazonaws.com"
+                              ]
+                           ]
+                        }
+                     },
+                     "Action":"sts:AssumeRole"
+                  }
+               ]
+            }
+         }
+      },
+      "LogStreamRolePolicy":{  
+         "Type":"AWS::IAM::Policy",
+         "Properties":{  
+            "PolicyName":"KinesisPutRecordPolicy",
+            "Roles":[  
+               {  
+                  "Ref":"LogStreamRole"
+               }
+            ],
+            "PolicyDocument":{  
+               "Version":"2012-10-17",
+               "Statement":[  
+                  {  
+                     "Effect":"Allow",
+                     "Action":"kinesis:PutRecord",
+                     "Resource":{  
+                        "Fn::GetAtt":[  
+                           "LogStream",
+                           "Arn"
+                        ]
+                     }
+                  },
+                  {  
+                     "Effect":"Allow",
+                     "Action":"iam:PassRole",
+                     "Resource":{  
+                        "Fn::Join":[  
+                           "",
+                           [  
+                              "arn:aws:iam::",
+                              {  
+                                 "Ref":"AWS::AccountId"
+                              },
+                              ":role/",
+                              {  
+                                 "Ref":"LogStreamRole"
+                              }
+                           ]
+                        ]
+                     }
+                  }
+               ]
+            }
+         }
+      }
+   },
+   
+   "Outputs":{  
+   }
 }
