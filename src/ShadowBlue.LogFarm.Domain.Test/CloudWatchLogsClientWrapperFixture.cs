@@ -55,7 +55,7 @@ namespace ShadowBlue.LogFarm.Domain.Test
             amazonclientMock.Setup(x => x.DescribeLogStreams(It.IsAny<DescribeLogStreamsRequest>()))
                 .Returns(new DescribeLogStreamsResponse
                 {
-                    LogStreams = new `List<LogStream>()
+                    LogStreams = new List<LogStream>()
                 });
 
             var target = new CloudWatchLogsClientWrapper(amazonclientMock.Object, LogGroup, Logstream);
