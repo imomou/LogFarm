@@ -1,8 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<parameters xmlns:xdt="http://schemas.microsoft.com/XML-Document-Transform">
-	<setParameter name="ApplicationName" value="" xdt:Transform="Insert"/>
-	<setParameter name="Environment" value="Uat" xdt:Transform="Insert"/>
-	<setParameter name="NLoggerTarget" value="jsonFile,cloudwatchlog" xdt:Transform="Insert"/>
-	<setParameter name="LogGroup" value="" xdt:Transform="Insert"/>
-	<setParameter name="ElmahTable" value="elmah-Dev" xdt:Transform="Insert"/>
-</parameters>

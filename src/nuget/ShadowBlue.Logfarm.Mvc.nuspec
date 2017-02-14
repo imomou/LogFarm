@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>LogFarm.Mvc</id>
-    <version>1.0.0.0</version>
+    <version>1.0.0.1</version>
     <authors>Sam Wang</authors>
     <owners>Sam Wang</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
@@ -31,10 +31,6 @@
     <file src="parameters.xml.uninstall.xdt" target="content" />
 		<file src="aws\NLog.config" target="content" />
 		<file src="aws\NLog.params.config" target="content" /> 
-    <file src="WebDeploys\Site.SetParameters.Dev.config.transform" target="content\CiWebDeploy" />
-    <file src="WebDeploys\Site.SetParameters.Tests.config.transform" target="content\CiWebDeploy" />
-    <file src="WebDeploys\Site.SetParameters.Prod.config.transform" target="content\CiWebDeploy" />
-    <file src="WebDeploys\Site.SetParameters.Uat.config.transform" target="content\CiWebDeploy" />
-    <file src="WebDeploys\Site.SetParameters.Staging.config.transform" target="content\CiWebDeploy" />
+    <file src="WebDeploys\Site.SetParameters.config.transform" target="content\CiWebDeploy" />
   </files>
 </package>
