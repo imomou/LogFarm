@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Amazon.CloudWatch;
@@ -56,8 +57,19 @@ namespace ShadowBlue.LogFarm.Domain.NLog
         }
 
         public void AddLogRequest(List<InputLogEvent> events)
-        {
-            var putLogEventsRequest = new PutLogEventsRequest(_logGroup, _logStream, events);
+        {      
+            var putLogEventsRequest = new PutLogEventsRequest(
+                _logGroup, 
+                _logStream, 
+                events);
+
+            _nextSequence = _client.DescribeLogStreams
+                (
+                    new DescribeLogStreamsRequest(_logGroup)
+                )
+                .LogStreams
+                .Single(x => x.LogStreamName == _logStream)
+                .UploadSequenceToken;
 
             lock (LockObject)
             {
@@ -69,6 +81,10 @@ namespace ShadowBlue.LogFarm.Domain.NLog
                     {
                         putLogEventsRequest.SequenceToken = _nextSequence;
                         var putLogEventsResponse = _client.PutLogEvents(putLogEventsRequest);
+
+                        if (putLogEventsResponse == null)
+                            continue;
+                        
                         _nextSequence = putLogEventsResponse.NextSequenceToken;
                         ret = putLogEventsResponse;
                     }
