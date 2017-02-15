@@ -2,12 +2,16 @@
 <package >
   <metadata>
     <id>LogFarm.Mvc</id>
+    <title>LogFarm MVC</title>
+    <description>LogFarm is a simple tool plugged from Elmah and Common Logging to help capture unhanded exceptions and explicit log events running in ASP.NET MVC Application. It uses AWS DynanoDB and CLoudwatch as storage for its cost and high durability.</description>
+    <projectUrl>https://github.com/imomou/LogFarm</projectUrl> 
     <version>1.0.0.1</version>
     <authors>Sam Wang</authors>
     <owners>Sam Wang</owners>
+    <tags>mvc error logging unhanded exception aws dynamodb cloudwatch</tags>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>LogFarm</description>
-    <releaseNotes>LogFarm initial with Elmah and NLog working to AWS</releaseNotes>
+    <releaseNotes>Licence change, to be more permissive, also have added some unit tests around NLogTarget and cloudformation improvements</releaseNotes>
     <copyright>Copyright 2015</copyright>
     <dependencies>
         <dependency id="AWSSDK.CloudWatch" version="[3.3.1.3,]" />
