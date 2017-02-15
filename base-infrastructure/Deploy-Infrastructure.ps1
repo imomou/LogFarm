@@ -1,6 +1,7 @@
 ﻿param(
 	$environment = (Read-Host 'Environment'),
 	$ElmahTableName = (Read-Host 'Name of Elmah Table'),
+    $NLogGroupName = (Read-Host 'Name of NLogGroup'),
 	$Bucket = (Read-Host 'Name of the S3 bucket to store template'),
 	$ProjectName = (Read-Host 'Name of the Project')
 )
@@ -20,8 +21,9 @@ $p1refix = New-Deployment -bucketname $Bucket -projectname $ProjectName -version
 
 Get-StackLinkParameters -StackParameters @(
     @{"Key" = "ElmahTableName"; "Value" = $ElmahTableName},
-    @{"Key" = "IsSubscribed"; "Value" = "subscribe"}
-) -TemplateUrl "$($p1refix)logfarm-base.template" |
+    @{"Key" = "NLogGroupName"; "Value" = $NLogGroupName},
+    @{"Key" = "IsSubscribed"; "Value" = "subscribe"}    
+) -TemplateUrl "$($p1refix)logfarm-base.template" 
     Upsert-StackLink -StackName "$environment-Forensics" -Tags $tags
 
 

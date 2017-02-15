@@ -1,8 +1,6 @@
 {  
    "AWSTemplateFormatVersion":"2010-09-09",
-   
    "Description":"Create DynamoDb table to store Elmah Logs and CloudWatch for Nlog",
-   
    "Parameters":{  
       "KeyPairName":{  
          "Description":"Name of an existing EC2 KeyPair to enable SSH access to the instances",
@@ -10,9 +8,14 @@
          "Default":"none-prod"
       },
       "ElmahTableName":{  
-         "Description":"Name of Elmah table will be created in DynamoDb",
+         "Description":"Name of DynamoDb table will be use to store Elmah logs",
          "Type":"String",
          "Default":"Elmah"
+      },
+      "NLogGroupName":{  
+         "Description":"Name of LogGroup will be use for storing NLog logs",
+         "Type":"String",
+         "Default":"NLog"
       },
       "IsSubscribed":{  
          "Description":"Logevents to be delivered to AWS Kinesis Stream",
@@ -39,7 +42,6 @@
          ]
       }
    },
-   
    "Resources":{  
       "ElmahTable":{  
          "Type":"AWS::DynamoDB::Table",
@@ -72,7 +74,17 @@
                }
             },
             "TableName":{  
-               "Ref":"ElmahTableName"
+               "Fn::Join":[  
+                  "-",
+                  [  
+                     {  
+                        "Ref":"AWS::StackName"
+                     },
+                     {  
+                        "Ref":"ElmahTableName"
+                     }
+                  ]
+               ]
             },
             "GlobalSecondaryIndexes":[  
                {  
@@ -103,7 +115,22 @@
          }
       },
       "NLogGroup":{  
-         "Type":"AWS::Logs::LogGroup"
+         "Type":"AWS::Logs::LogGroup",
+         "Properties":{  
+            "LogGroupName":{  
+               "Fn::Join":[  
+                  "-",
+                  [  
+                     {  
+                        "Ref":"AWS::StackName"
+                     },
+                     {  
+                        "Ref":"NLogGroupName"
+                     }
+                  ]
+               ]
+            }
+         }
       },
       "NLogGroupCSub":{  
          "DependsOn":[  
@@ -303,7 +330,7 @@
          }
       }
    },
-   
    "Outputs":{  
+
    }
 }
