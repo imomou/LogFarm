@@ -6,7 +6,6 @@ using System.Diagnostics.Contracts;
 using System.Linq;
 using Amazon.DynamoDBv2.DocumentModel;
 using Elmah;
-using NLog.Common;
 using ShadowBlue.LogFarm.Repository;
 using ShadowBlue.LogFarm.Repository.Models;
 using ApplicationException = Elmah.ApplicationException;
@@ -194,14 +193,10 @@ namespace ShadowBlue.LogFarm.Domain.Elmah
             Contract.Requires(collection != null);
             Contract.Ensures(Contract.Result<Dictionary<string, string>>() != null);
 
-            InternalLogger.Debug("DynamoDb {0}", "ToDictionary");
-
             var queryStringDoc = new Dictionary<string, string>();
 
             foreach (var queryStringKey in collection.AllKeys)
             {
-                InternalLogger.Debug("DynamoDb {0}", queryStringKey);
-
                 var values = collection.GetValues(queryStringKey);
 
                 if (values == null)

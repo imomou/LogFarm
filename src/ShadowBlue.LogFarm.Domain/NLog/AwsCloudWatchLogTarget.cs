@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Web.Configuration;
 using Amazon;
 using Amazon.CloudWatchLogs;
 using Amazon.CloudWatchLogs.Model;
-using Amazon.EC2.Util;
 using Amazon.Runtime;
+using Amazon.Util;
 using NLog;
 using NLog.Common;
 using NLog.Config;
@@ -40,8 +39,8 @@ namespace ShadowBlue.LogFarm.Domain.NLog
 
             var region = RegionEndpoint.GetBySystemName(regionConfig);
             var awsClient = new AmazonCloudWatchLogsClient(region);
-            var logstream = !string.IsNullOrEmpty(Amazon.Util.EC2InstanceMetadata.InstanceId)
-                ? string.Format("{0}-{1}-{2}", LogStreaam, Environment, Amazon.Util.EC2InstanceMetadata.InstanceId)
+            var logstream = !string.IsNullOrEmpty(EC2InstanceMetadata.InstanceId)
+                ? string.Format("{0}-{1}-{2}", LogStreaam, Environment, EC2InstanceMetadata.InstanceId)
                 : string.Format("{0}-{1}", LogStreaam, Environment);
 
             InternalLogger.Debug("Writing LogStream", logstream);
@@ -57,7 +56,7 @@ namespace ShadowBlue.LogFarm.Domain.NLog
                 //purely for runnning it locally for the reason this will be still instantiated even if it's not part of the target
                 if (ex.Message != "Unable to find credentials")
                 throw;
-            } 
+            }
         }
 
         protected override void Write(LogEventInfo logEvent)

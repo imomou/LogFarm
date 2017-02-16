@@ -14,7 +14,7 @@
   
 	<common xdt:Transform="Insert">
 		<logging>
-			<factoryAdapter type="Common.Logging.NLog.NLogLoggerFactoryAdapter, Common.Logging.NLog30">
+			<factoryAdapter type="Common.Logging.NLog.NLogLoggerFactoryAdapter, Common.Logging.NLog41">
 				<arg key="configType" value="FILE" />
 				<arg key="configFile" value="~/NLog.config" />
 			</factoryAdapter>

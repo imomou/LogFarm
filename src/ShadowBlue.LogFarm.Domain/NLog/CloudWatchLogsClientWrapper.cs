@@ -1,8 +1,6 @@
 ﻿using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text.RegularExpressions;
-using Amazon.CloudWatch;
 using Amazon.CloudWatchLogs;
 using Amazon.CloudWatchLogs.Model;
 using Amazon.Runtime;
@@ -52,7 +50,7 @@ namespace ShadowBlue.LogFarm.Domain.NLog
             }
             catch (ResourceAlreadyExistsException)
             {
-                InternalLogger.Debug("Forensics is trying to create logstream that already existed {0}", _logStream);
+                InternalLogger.Debug("creation of logstream already existed {0}", _logStream);
             }
         }
 
