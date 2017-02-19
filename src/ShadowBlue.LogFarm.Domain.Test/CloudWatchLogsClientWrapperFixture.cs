@@ -5,6 +5,7 @@ using System.Threading;
 using Amazon;
 using Amazon.CloudWatchLogs;
 using Amazon.CloudWatchLogs.Model;
+using Amazon.Runtime;
 using AutoMoq;
 using FizzWare.NBuilder;
 using Moq;
@@ -20,10 +21,31 @@ namespace ShadowBlue.LogFarm.Domain.Test
         private const string LogGroup = "Dev-LogFarm-NLogGroup-9V1QT6AKKOST";
         private const string Logstream = "NLogTestStream";
 
+        private AmazonCloudWatchLogsClient InitialiseClient()
+        {
+            try
+            {
+                var cloudwatchClient = new AmazonCloudWatchLogsClient(RegionEndpoint.USWest1);
+
+                return cloudwatchClient;
+            }
+            catch (AmazonServiceException)
+            {
+                var lines = System.IO.File.ReadAllLines(@"..\..\..\TestArtifacts\credentials.dec");
+
+                var key = lines.First();
+                var secret = lines.ElementAt(1);
+
+                var cloudwatchClient = new AmazonCloudWatchLogsClient(new BasicAWSCredentials(key,secret), RegionEndpoint.USWest1);
+
+                return cloudwatchClient;
+            }
+        }
+
         [SetUp]
         public void Setup()
         {
-            var client = new AmazonCloudWatchLogsClient(RegionEndpoint.USWest1);
+            var client = InitialiseClient();
 
             var logstreams = client.DescribeLogStreams(
                 new DescribeLogStreamsRequest
@@ -102,7 +124,7 @@ namespace ShadowBlue.LogFarm.Domain.Test
         public void InitialiseLogStream_Test()
         {
             //arrange
-            var cloudwatchClient = new AmazonCloudWatchLogsClient(RegionEndpoint.USWest1);
+            var cloudwatchClient = InitialiseClient();
 
             var cloudwatvchLogClient = new CloudWatchLogsClientWrapper(cloudwatchClient, LogGroup, Logstream);
 
@@ -178,7 +200,7 @@ namespace ShadowBlue.LogFarm.Domain.Test
         public void AddLogRequest_OnlyOneShouldbeCommited()
         {
             //arrange
-            var cloudwatchClient = new AmazonCloudWatchLogsClient(RegionEndpoint.USWest1);
+            var cloudwatchClient = InitialiseClient();
 
             var logstream = Logstream + Guid.NewGuid();
 
@@ -220,7 +242,7 @@ namespace ShadowBlue.LogFarm.Domain.Test
         public void AddLogRequest_AllShouldbeCommited()
         {
             //arrange
-            var cloudwatchClient = new AmazonCloudWatchLogsClient(RegionEndpoint.USWest1);
+            var cloudwatchClient = InitialiseClient();
 
             var logstream = Logstream + Guid.NewGuid();
 
