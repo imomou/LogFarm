@@ -36,26 +36,25 @@ namespace ShadowBlue.LogFarm.Domain.NLog
             base.InitializeTarget();
 
             var regionConfig = WebConfigurationManager.AppSettings["AWSRegion"] ?? "us-west-1";
-
             var region = RegionEndpoint.GetBySystemName(regionConfig);
-            var awsClient = new AmazonCloudWatchLogsClient(region);
-            var logstream = !string.IsNullOrEmpty(EC2InstanceMetadata.InstanceId)
-                ? string.Format("{0}-{1}-{2}", LogStreaam, Environment, EC2InstanceMetadata.InstanceId)
-                : string.Format("{0}-{1}", LogStreaam, Environment);
-
-            InternalLogger.Debug("Writing LogStream", logstream);
-
-            _client = new CloudWatchLogsClientWrapper(awsClient, LogGroup, logstream);
 
             try
             {
+                var awsClient = new AmazonCloudWatchLogsClient(region);
+                var logstream = !string.IsNullOrEmpty(EC2InstanceMetadata.InstanceId)
+                    ? string.Format("{0}-{1}-{2}", LogStreaam, Environment, EC2InstanceMetadata.InstanceId)
+                    : string.Format("{0}-{1}", LogStreaam, Environment);
+
+                InternalLogger.Debug("Writing LogStream", logstream);
+
+                _client = new CloudWatchLogsClientWrapper(awsClient, LogGroup, logstream);
                 _client.InitialiseLogStream();
             }
             catch (AmazonServiceException ex)
             {
                 //purely for runnning it locally for the reason this will be still instantiated even if it's not part of the target
                 if (ex.Message != "Unable to find credentials")
-                throw;
+                    throw;
             }
         }
 

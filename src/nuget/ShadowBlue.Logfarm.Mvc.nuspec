@@ -32,8 +32,8 @@
     <file src="mvc-content\*" target="content" />
     <file src="parameters.xml.install.xdt" target="content" />
     <file src="parameters.xml.uninstall.xdt" target="content" />
-		<file src="aws\NLog.config" target="content" />
-		<file src="aws\NLog.params.config" target="content" /> 
+    <file src="aws\NLog.config" target="content" />
+    <file src="aws\NLog.params.config" target="content" /> 
     <file src="WebDeploys\Site.SetParameters.config.transform" target="content\CiWebDeploy" />
   </files>
 </package>
