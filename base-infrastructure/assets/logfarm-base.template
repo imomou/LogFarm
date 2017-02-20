@@ -2,11 +2,6 @@
    "AWSTemplateFormatVersion":"2010-09-09",
    "Description":"Create DynamoDb table to store Elmah Logs and CloudWatch for Nlog",
    "Parameters":{  
-      "KeyPairName":{  
-         "Description":"Name of an existing EC2 KeyPair to enable SSH access to the instances",
-         "Type":"AWS::EC2::KeyPair::KeyName",
-         "Default":"none-prod"
-      },
       "ElmahTableName":{  
          "Description":"Name of DynamoDb table will be use to store Elmah logs",
          "Type":"String",
@@ -170,9 +165,38 @@
                   {  
                      "Effect":"Allow",
                      "Action":[  
-                        "logs:*",
-                        "logs:CreateLogStream",
-                        "logs:DescribeLogStreams"
+                        "logs:*"
+                     ],
+                     "Resource":[  
+                        {  
+                           "Fn::Join":[  
+                              "",
+                              [  
+                                 "arn:aws:logs:*:*:",
+                                 {  
+                                    "Ref":"NLogGroup"
+                                 }
+                              ]
+                           ]
+                        },
+                        {  
+                           "Fn::Join":[  
+                              "",
+                              [  
+                                 "arn:aws:logs:*:*:",
+                                 {  
+                                    "Ref":"NLogGroup"
+                                 },
+                                 ":log-stream:*"
+                              ]
+                           ]
+                        }
+                     ]
+                  },
+                  {  
+                     "Effect":"Deny",
+                     "Action":[  
+                        "logs:deleteLogGroup"
                      ],
                      "Resource":[  
                         {  
@@ -202,7 +226,7 @@
                   },
                   {  
                      "Action":[  
-                        "dynamodb:*"
+                        "dynamodb:DeleteTable"
                      ],
                      "Effect":"Allow",
                      "Resource":[  
@@ -229,21 +253,6 @@
                               ]
                            ]
                         }
-                     ]
-                  },
-                  {  
-                     "Effect":"Allow",
-                     "Action":[  
-                        "cloudwatch:DescribeAlarmHistory",
-                        "cloudwatch:DescribeAlarms",
-                        "cloudwatch:DescribeAlarmsForMetric",
-                        "cloudwatch:GetMetricData",
-                        "cloudwatch:GetMetricStatistics",
-                        "cloudwatch:PutMetricData",
-                        "cloudwatch:SetAlarmState"
-                     ],
-                     "Resource":[  
-                        "*"
                      ]
                   }
                ]

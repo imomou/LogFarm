@@ -24,7 +24,8 @@ Get-StackLinkParameters -StackParameters @(
     @{"Key" = "NLogGroupName"; "Value" = $NLogGroupName},
     @{"Key" = "IsSubscribed"; "Value" = "subscribe"}    
 ) -TemplateUrl "$($p1refix)logfarm-base.template" 
-    Upsert-StackLink -StackName "$environment-Forensics" -Tags $tags
+    Upsert-StackLink -StackName "$environment-LogFarm" -Tags $tags
 
 
 
+  
