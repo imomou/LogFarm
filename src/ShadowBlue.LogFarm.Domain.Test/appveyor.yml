@@ -1,6 +1,0 @@
-environment:
-  secret: JYDaKOFCRY+I3WPpxPmkFg==
-
-install:
-  - nuget install secure-file -Version 1.0.31
-  - ..\..\secure-file.1.0.31\tools\secure-file -decrypt ..\..\TestArtifacts\credentials.enc -secret %secret% -out ..\..\TestArtifacts\credentials.dec
