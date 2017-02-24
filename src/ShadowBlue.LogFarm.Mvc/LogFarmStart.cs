@@ -1,5 +1,5 @@
 ﻿using System.Web;
-using System.Web.Mvc;
+using System.Web.Http;
 using ShadowBlue.LogFarm.Mvc;
 using WebActivatorEx;
 
@@ -11,8 +11,7 @@ namespace ShadowBlue.LogFarm.Mvc
     {
         public static void Start()
         {
-            GlobalFilters.Filters.Add(new ElmahErrorAttribute());
-            GlobalFilters.Filters.Add(new HandleErrorAttribute());
+            GlobalConfiguration.Configuration.Filters.Add(new ElmahErrorAttribute());
         }
     }
 }

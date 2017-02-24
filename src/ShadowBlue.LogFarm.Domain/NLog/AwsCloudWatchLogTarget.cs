@@ -26,6 +26,8 @@ namespace ShadowBlue.LogFarm.Domain.NLog
 
         public string Environment { get; set; }
 
+        public string Suffix { get; set; }
+
         public void Setup(ICloudWatchLogsClientWrapper client)
         {
             _client = client;
@@ -41,9 +43,11 @@ namespace ShadowBlue.LogFarm.Domain.NLog
             try
             {
                 var awsClient = new AmazonCloudWatchLogsClient(region);
-                var logstream = !string.IsNullOrEmpty(EC2InstanceMetadata.InstanceId)
-                    ? string.Format("{0}-{1}-{2}", LogStreaam, Environment, EC2InstanceMetadata.InstanceId)
-                    : string.Format("{0}-{1}", LogStreaam, Environment);
+                var logstream = !string.IsNullOrEmpty(Suffix) 
+                    ? Suffix 
+                    : !string.IsNullOrEmpty(EC2InstanceMetadata.InstanceId)
+                            ? string.Format("{0}-{1}-{2}", LogStreaam, Environment, EC2InstanceMetadata.InstanceId)
+                            : string.Format("{0}-{1}", LogStreaam, Environment);
 
                 InternalLogger.Debug("Writing LogStream", logstream);
 

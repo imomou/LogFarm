@@ -1,4 +1,5 @@
-﻿using System.Web;
+﻿using System;
+using System.Web;
 using System.Web.Http.Filters;
 using System.Web.Mvc;
 using Elmah;
@@ -16,11 +17,13 @@ namespace ShadowBlue.LogFarm.Mvc
 
         public override void OnException(HttpActionExecutedContext actionExecutedContext)
         {
-            var error = new Error(actionExecutedContext.Exception, HttpContext.Current);
-            var elmahError = ErrorLog.GetDefault(HttpContext.Current);
-            elmahError.Log(error);
-
             base.OnException(actionExecutedContext);
+
+            var e = actionExecutedContext.Exception;
+            var error = new Error(e, HttpContext.Current);
+            var elmahError = ErrorLog.GetDefault(HttpContext.Current);
+
+            elmahError.Log(error);
         }
     }
 }
