@@ -10,7 +10,7 @@
     <owners>Sam Wang</owners>
     <tags>mvc error logging unhanded exception aws dynamodb cloudwatch</tags>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <releaseNotes>Licence change, to be more permissive, also have added some unit tests around NLogTarget and cloudformation improvements</releaseNotes>
+    <releaseNotes>Address the problem to do with elmah double logging and allow the option to skip getting ec2metadata</releaseNotes>
     <copyright>Copyright 2015</copyright>
     <dependencies>
         <dependency id="AWSSDK.CloudWatch" version="[3.3.1.3,]" />
