@@ -6,6 +6,6 @@ install:
   - C:\projects\logfarm\src\packages\secure-file.1.0.31\tools\secure-file -decrypt C:\projects\logfarm\src\TestArtifacts\credentials.enc -secret %secret% -out C:\projects\logfarm\src\TestArtifacts\credentials.dec
 
 before_test:
-  - Get-ChildItem -Recurse
-  - Test-Path C:\projects\logfarm\src\packages\secure-file.1.0.31\tools\secure-file 
-  - Test-Path C:\projects\logfarm\src\TestArtifacts\credentials.enc
+  - ps: Get-ChildItem -Recurse
+  - ps: Test-Path C:\projects\logfarm\src\packages\secure-file.1.0.31\tools\secure-file 
+  - ps: Test-Path C:\projects\logfarm\src\TestArtifacts\credentials.enc
