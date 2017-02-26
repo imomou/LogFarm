@@ -4,13 +4,10 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
-using Amazon.CloudWatch;
 using Amazon.CloudWatchLogs;
 using Amazon.CloudWatchLogs.Model;
 using Amazon.Runtime;
-using Elmah;
 using NLog.Common;
-using ApplicationException = System.ApplicationException;
 
 namespace ShadowBlue.LogFarm.Domain.NLog
 {
@@ -40,7 +37,6 @@ namespace ShadowBlue.LogFarm.Domain.NLog
 
         public void InitialiseLogStream()
         {
-
             var describeLogStreamsResponse = _client.DescribeLogStreams(
                 new DescribeLogStreamsRequest(_logGroup)
                 {
