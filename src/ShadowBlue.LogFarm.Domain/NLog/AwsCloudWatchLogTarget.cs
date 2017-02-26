@@ -57,7 +57,7 @@ namespace ShadowBlue.LogFarm.Domain.NLog
             }
             catch (AmazonServiceException ex)
             {
-                //purely for runnning it locally for the reason this will be still instantiated even if it's not part of the target
+                //purely for runnning it locally for the reason this will be still instantiated even if it's not part of the targe
                 if (ex.Message != "Unable to find credentials")
                     throw;
             }
@@ -73,7 +73,9 @@ namespace ShadowBlue.LogFarm.Domain.NLog
                 {
                     new InputLogEvent
                     {
-                        Timestamp = logEvent.TimeStamp,
+                        Timestamp = logEvent
+                            .TimeStamp
+                            .ToUniversalTime(),
                         Message = message
                     }
                 };
@@ -99,7 +101,9 @@ namespace ShadowBlue.LogFarm.Domain.NLog
             var logRequest = logEvents
                 .Select(x => new InputLogEvent
                 {
-                    Timestamp = x.LogEvent.TimeStamp,
+                    Timestamp = x.LogEvent
+                        .TimeStamp
+                        .ToUniversalTime(),
                     Message = Layout.Render(x.LogEvent)
                 })
                 .ToList();
