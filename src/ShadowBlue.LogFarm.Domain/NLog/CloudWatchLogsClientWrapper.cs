@@ -53,7 +53,13 @@ namespace ShadowBlue.LogFarm.Domain.NLog
                 var timer = Stopwatch.StartNew();
                 while (true)
                 {
-                    if (describeLogStreamsResponse.LogStreams.Any(x => x.LogStreamName == _logStream))
+                    var describeLogStreamsResponseCheck = _client.DescribeLogStreams(
+                        new DescribeLogStreamsRequest(_logGroup)
+                        {
+                            LogStreamNamePrefix = _logStream,
+                        });
+
+                    if (describeLogStreamsResponseCheck.LogStreams.Any(x => x.LogStreamName == _logStream))
                     {
                         timer.Stop();
                         break;
