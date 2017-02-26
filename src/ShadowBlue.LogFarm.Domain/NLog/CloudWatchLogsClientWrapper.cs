@@ -1,14 +1,20 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading;
+using Amazon.CloudWatch;
 using Amazon.CloudWatchLogs;
 using Amazon.CloudWatchLogs.Model;
 using Amazon.Runtime;
+using Elmah;
 using NLog.Common;
+using ApplicationException = System.ApplicationException;
 
 namespace ShadowBlue.LogFarm.Domain.NLog
 {
-   public interface ICloudWatchLogsClientWrapper
+    public interface ICloudWatchLogsClientWrapper
     {
         void AddLogRequest(List<InputLogEvent> events);
         void InitialiseLogStream();
@@ -47,6 +53,24 @@ namespace ShadowBlue.LogFarm.Domain.NLog
             try
             {
                 _client.CreateLogStream(new CreateLogStreamRequest(_logGroup, _logStream));
+
+                var timer = Stopwatch.StartNew();
+                while (true)
+                {
+                    if (describeLogStreamsResponse.LogStreams.Any(x => x.LogStreamName == _logStream))
+                    {
+                        timer.Stop();
+                        break;
+                    }
+
+                    if (timer.ElapsedMilliseconds > 100000)
+                    {
+                        timer.Stop();
+                        throw new ApplicationException("Cannot CrearteLog Stream");
+                    }
+
+                    Thread.Sleep(1000);
+                }
             }
             catch (ResourceAlreadyExistsException)
             {
@@ -61,13 +85,18 @@ namespace ShadowBlue.LogFarm.Domain.NLog
                 _logStream, 
                 events);
 
-            _nextSequence = _client.DescribeLogStreams
+            var logstream = _client.DescribeLogStreams
                 (
                     new DescribeLogStreamsRequest(_logGroup)
                 )
                 .LogStreams
-                .Single(x => x.LogStreamName == _logStream)
-                .UploadSequenceToken;
+                .Where(x => x.LogStreamName == _logStream)
+                .ToList();
+
+            if ( !logstream.Any())
+                throw new ApplicationException("LogStream doesn't exist");
+
+            _nextSequence = logstream.Single().UploadSequenceToken;
 
             lock (LockObject)
             {

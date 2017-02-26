@@ -274,5 +274,38 @@ namespace ShadowBlue.LogFarm.Domain.Test
             results.Events.All(x => string.IsNullOrEmpty(x.Message));
             results.Events.All(x => x.Timestamp != new DateTime());
         }
+
+        [Test]
+        public void AddLogRequest_InitialiseLogStream_ShouldBeCalledINoLogStream()
+        {
+            //arrange
+            var cloudwatchClient = InitialiseClient();
+
+            var logstream = Logstream + Guid.NewGuid();
+
+            var cloudwatvhLogClient = new CloudWatchLogsClientWrapper(
+                cloudwatchClient,
+                LogGroup,
+                logstream);
+
+            var logevents = Builder<InputLogEvent>
+                .CreateListOfSize(20)
+                .All()
+                    .With(x => x.Timestamp = DateTime.Now.AddDays(-1))
+                .Build()
+                .ToList();
+
+            //act
+            try
+            {
+                cloudwatvhLogClient.AddLogRequest(logevents);
+            }
+            catch (ApplicationException ex)
+            {
+                if (ex.Message == "LogStream doesn't exist")
+                    //assert
+                    Assert.Pass();
+            }
+        }
     }
 }

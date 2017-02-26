@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Web.Configuration;
 using Amazon;
@@ -43,8 +44,8 @@ namespace ShadowBlue.LogFarm.Domain.NLog
             try
             {
                 var awsClient = new AmazonCloudWatchLogsClient(region);
-                var logstream = !string.IsNullOrEmpty(Suffix) 
-                    ? Suffix 
+                var logstream = !string.IsNullOrEmpty(Suffix)
+                    ? string.Format("{0}-{1}-{2}", LogStreaam, Environment, Suffix) 
                     : !string.IsNullOrEmpty(EC2InstanceMetadata.InstanceId)
                             ? string.Format("{0}-{1}-{2}", LogStreaam, Environment, EC2InstanceMetadata.InstanceId)
                             : string.Format("{0}-{1}", LogStreaam, Environment);
@@ -68,14 +69,27 @@ namespace ShadowBlue.LogFarm.Domain.NLog
 
             var message = Layout.Render(logEvent);
 
-            _client.AddLogRequest(new List<InputLogEvent>
-            {
-                new InputLogEvent
+            var logRequest = new List<InputLogEvent>
                 {
-                    Timestamp = logEvent.TimeStamp,
-                    Message = message
-                }
-            });
+                    new InputLogEvent
+                    {
+                        Timestamp = logEvent.TimeStamp,
+                        Message = message
+                    }
+                };
+
+            try
+            {
+                _client.AddLogRequest(logRequest);
+            }
+            catch (ApplicationException ex)
+            {
+                if (ex.Message != "LogStream doesn't exist")
+                    throw;
+
+                _client.InitialiseLogStream();
+                _client.AddLogRequest(logRequest);
+            }
         }
 
         protected override void Write(AsyncLogEventInfo[] logEvents)
@@ -90,7 +104,18 @@ namespace ShadowBlue.LogFarm.Domain.NLog
                 })
                 .ToList();
 
-            _client.AddLogRequest(logRequest);
+            try
+            {
+                _client.AddLogRequest(logRequest);
+            }
+            catch (ApplicationException ex)
+            {
+                if (ex.Message != "LogStream doesn't exist")
+                    throw;
+
+                _client.InitialiseLogStream();
+                _client.AddLogRequest(logRequest);
+            }
         }
     }
 }
