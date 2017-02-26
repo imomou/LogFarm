@@ -11,7 +11,7 @@
 			name="EnvironmentDdb"
 			kind="XmlFile"
 			scope="obj\\Release\\Package\\PackageTmp\\Web\.config$"
-			match="/configuration/elmah/errorLog[@type='ShadowBlue.LogFarm.Domain.Elmah.ElmahDynamoDbErrorLog, ShadowBlue.LogFarm.Domain.Elmah']/@environment"
+			match="/configuration/elmah/errorLog[@type='ShadowBlue.LogFarm.Domain.Elmah.ElmahDynamoDbErrorLog, ShadowBlue.LogFarm.Domain.Elmah']/@ddbEnvironment"
 		/>
 		<parameterEntry
 			name="EnvironmentDbLogger"
