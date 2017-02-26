@@ -3,7 +3,7 @@ environment:
 
 install:
   - nuget install secure-file -Version 1.0.31
-   - ps: Get-ChildItem -Recurse
+  - ps: Get-ChildItem -Recurse
   - ps: Test-Path C:\projects\logfarm\src\packages\secure-file.1.0.31\tools\secure-file 
   - ps: Test-Path C:\projects\logfarm\src\TestArtifacts\credentials.enc
   - C:\projects\logfarm\src\packages\secure-file.1.0.31\tools\secure-file -decrypt C:\projects\logfarm\src\TestArtifacts\credentials.enc -secret %secret% -out C:\projects\logfarm\src\TestArtifacts\credentials.dec
