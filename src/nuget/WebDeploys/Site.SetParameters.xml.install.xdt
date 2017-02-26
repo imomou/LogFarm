@@ -5,4 +5,5 @@
 	<setParameter name="NLoggerTarget" value="jsonFile,cloudwatchlog" xdt:Transform="Insert"/>
 	<setParameter name="LogGroup" value="" xdt:Transform="Insert"/>
 	<setParameter name="ElmahTable" value="elmah-dev" xdt:Transform="Insert"/>
+	<setParameter name="NLogSuffix" value="" xdt:Transform="Insert"/>
 </parameters>

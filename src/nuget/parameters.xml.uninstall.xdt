@@ -32,5 +32,11 @@
 		xdt:Locator="Match(name)">
 		>
 	</parameter>
+
+	<parameter name="NLogSuffix"
+		xdt:Transform="Remove"
+		xdt:Locator="Match(name)">
+		>
+	</parameter> 
 	
 </parameters>

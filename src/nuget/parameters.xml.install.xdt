@@ -80,4 +80,18 @@
 		/>
 	</parameter>
 
+	<parameter 
+		name="NLogSuffix"
+		description=""
+		tags=""
+		xdt:Transform="Insert"
+		>
+		<parameterEntry
+			name="AppLogger"
+			kind="XmlFile"
+			scope="obj\\Release\\Package\\PackageTmp\\NLog\.params\.config$"
+			match="/nlog/variable[@name='Suffix']/@value" />
+	</parameter>
+
+
 </parameters>
