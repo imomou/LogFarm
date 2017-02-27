@@ -1,4 +1,4 @@
-# LogFarm https://ci.appveyor.com/project/imomou/LogFarm/branch/master
+# LogFarm
 
 A Diagnostics tool for .Net Application. Currently it contains NLog Target that writes to AWS CloudWatch and Elmah Repository to AWS DynamoDb
 
