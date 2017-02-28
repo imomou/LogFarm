@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using Amazon;
+using Amazon.CloudWatchLogs;
+using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DataModel;
 using Amazon.DynamoDBv2.DocumentModel;
+using Amazon.Runtime;
 using Elmah;
 using FizzWare.NBuilder;
 using Moq;
@@ -27,7 +30,6 @@ namespace ShadowBlue.LogFarm.Domain.Test
                 IndexName = "ApplicationName-DateTimeId-Index"
             };
 
-        private readonly DynamoDBContext _ddb = new DynamoDBContext(RegionEndpoint.USWest1, DefaultDbOperationConfig);
         private readonly Dictionary<string, string> _config = new Dictionary<string, string> {
                 {
                     "ddbAppName", Settings.Default.ApplicationName
@@ -37,14 +39,47 @@ namespace ShadowBlue.LogFarm.Domain.Test
                 }
             };
 
+        public DynamoDBContext InitialiseClient()
+        {
+            try
+            {
+                var cloudwatchClient = new DynamoDBContext(RegionEndpoint.USWest1);
+
+                return cloudwatchClient;
+            }
+            catch (AmazonServiceException)
+            {
+                var lines = System.IO.File.ReadAllLines(@"..\..\..\TestArtifacts\credentials.dec");
+
+                var key = lines.ElementAt(1);
+                var secret = lines.ElementAt(2);
+
+                try
+                {
+                    var cloudwatchClient = new DynamoDBContext(new AmazonDynamoDBClient(new BasicAWSCredentials(key,secret),RegionEndpoint.USWest1), DefaultDbOperationConfig);
+
+                    return cloudwatchClient;
+                }
+                catch (Exception ex)
+                {
+                    if (ex.Message.Contains("The security token included in the request is invalid key"))
+                        throw new Exception(string.Format("The security token included in the request is invalid key {0}", key));
+                    throw;
+                }
+            }
+        }
+
+
         [SetUp]
         public void SetupPerTest()
         {
-            var removeTargets = _ddb.FromScan<ElmahError>(
+            var ddb = InitialiseClient();
+
+            var removeTargets = ddb.FromScan<ElmahError>(
                 new ScanOperationConfig(), DefaultDbOperationConfig).ToList();
-            var removeAllWrite = _ddb.CreateBatchWrite<ElmahError>(DefaultDbOperationConfig);
+            var removeAllWrite = ddb.CreateBatchWrite<ElmahError>(DefaultDbOperationConfig);
             removeAllWrite.AddDeleteItems(removeTargets);
-            _ddb.ExecuteBatchWrite(removeAllWrite);
+            ddb.ExecuteBatchWrite(removeAllWrite);
         }
 
         [Test]
@@ -52,7 +87,7 @@ namespace ShadowBlue.LogFarm.Domain.Test
         {
             //arrange
             var repository = new DynamoDbRepository<ElmahError>(
-                    Settings.Default,_ddb, string.Empty
+                    Settings.Default, InitialiseClient(), string.Empty
                 );
 
             var dynamodb = new ElmahDynamoDbErrorLog(_config, repository);
@@ -75,7 +110,7 @@ namespace ShadowBlue.LogFarm.Domain.Test
         {
             //arrange
             var repository = new DynamoDbRepository<ElmahError>(
-                    Settings.Default, _ddb, string.Empty
+                    Settings.Default, InitialiseClient(), string.Empty
                 );
 
             var dynamodb = new ElmahDynamoDbErrorLog(_config, repository);
@@ -87,7 +122,7 @@ namespace ShadowBlue.LogFarm.Domain.Test
             //act
             dynamodb.Log(error);
 
-            var elmaherrors = _ddb.FromScan<ElmahError>(new ScanOperationConfig(), DefaultDbOperationConfig).ToList();
+            var elmaherrors = InitialiseClient().FromScan<ElmahError>(new ScanOperationConfig(), DefaultDbOperationConfig).ToList();
 
             //assert
             elmaherrors.Count.Should().Equal(1);
@@ -98,8 +133,10 @@ namespace ShadowBlue.LogFarm.Domain.Test
         public void ToError_Test()
         {
             //arrange
+            var ddb = InitialiseClient();
+
             var repository = new DynamoDbRepository<ElmahError>(
-                    Settings.Default, _ddb, string.Empty
+                    Settings.Default, ddb, string.Empty
                 );
 
             var dynamodb = new ElmahDynamoDbErrorLog(_config, repository);
@@ -110,8 +147,8 @@ namespace ShadowBlue.LogFarm.Domain.Test
                 .With(x => x.DateTimeId = datetimeId)
                 .With(x => x.ApplicationName = Settings.Default.ApplicationName)
                 .Build();
-            
-            _ddb.Save(error, DefaultDbOperationConfig);
+
+            ddb.Save(error, DefaultDbOperationConfig);
             
             //act
             var result = dynamodb.GetError(datetimeId);
@@ -148,8 +185,10 @@ namespace ShadowBlue.LogFarm.Domain.Test
         public void GetErrors_Test_ZeroPageIndex()
         {
             //arrange
+            var ddb = InitialiseClient();
+
             var repository = new DynamoDbRepository<ElmahError>(
-                    Settings.Default, _ddb, string.Empty
+                    Settings.Default, ddb, string.Empty
                 );
 
             var dynamodb = new ElmahDynamoDbErrorLog(_config, repository);
@@ -168,7 +207,7 @@ namespace ShadowBlue.LogFarm.Domain.Test
 
                 error.TimeUtc = date;
                 error.DateTimeId = datetimeId;
-                _ddb.Save(error, DefaultDbOperationConfig);
+                ddb.Save(error, DefaultDbOperationConfig);
             }
 
             var results = new List<ErrorLogEntry>();

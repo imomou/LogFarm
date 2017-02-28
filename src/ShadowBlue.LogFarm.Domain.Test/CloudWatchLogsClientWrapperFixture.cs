@@ -41,18 +41,13 @@ namespace ShadowBlue.LogFarm.Domain.Test
                     var cloudwatchClient = new AmazonCloudWatchLogsClient(new BasicAWSCredentials(key, secret),
                         RegionEndpoint.USWest1);
 
-                    cloudwatchClient.DescribeLogStreams(
-                        new DescribeLogStreamsRequest
-                        {
-                            LogGroupName = LogGroup
-                        }
-                        );
-
                     return cloudwatchClient;
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
-                    throw new Exception(string.Format("The security token included in the request is invalid key {0}", key));
+                    if (ex.Message.Contains("The security token included in the request is invalid key"))
+                        throw new Exception(string.Format("The security token included in the request is invalid key {0}", key));
+                    throw;
                 }         
             }
         }
@@ -89,10 +84,20 @@ namespace ShadowBlue.LogFarm.Domain.Test
 
             var amazonclientMock = container.GetMock<IAmazonCloudWatchLogs>();
 
-            amazonclientMock.Setup(x => x.DescribeLogStreams(It.IsAny<DescribeLogStreamsRequest>()))
+            amazonclientMock.SetupSequence(x => x.DescribeLogStreams(It.IsAny<DescribeLogStreamsRequest>()))
                 .Returns(new DescribeLogStreamsResponse
                 {
                     LogStreams = new List<LogStream>()
+                })
+                .Returns(new DescribeLogStreamsResponse
+                {
+                    LogStreams = new List<LogStream>
+                    {
+                        new LogStream
+                        {
+                            LogStreamName = Logstream
+                        }
+                    }
                 });
 
             var target = new CloudWatchLogsClientWrapper(amazonclientMock.Object, LogGroup, Logstream);

@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Linq;
 using Amazon;
+using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DataModel;
 using Amazon.DynamoDBv2.DocumentModel;
+using Amazon.Runtime;
 using FizzWare.NBuilder;
 using Moq;
 using NUnit.Framework;
@@ -24,16 +26,46 @@ namespace ShadowBlue.LogFarm.Repository.Test
                 IndexName = "ApplicationName-DateTimeId-Index"
             };
 
-        private readonly DynamoDBContext _ddb = new DynamoDBContext(RegionEndpoint.USWest1, DefaultDbOperationConfig);
+        public DynamoDBContext InitialiseClient()
+        {
+            try
+            {
+                var cloudwatchClient = new DynamoDBContext(RegionEndpoint.USWest1);
+
+                return cloudwatchClient;
+            }
+            catch (AmazonServiceException)
+            {
+                var lines = System.IO.File.ReadAllLines(@"..\..\..\TestArtifacts\credentials.dec");
+
+                var key = lines.ElementAt(1);
+                var secret = lines.ElementAt(2);
+
+                try
+                {
+                    var cloudwatchClient = new DynamoDBContext(new AmazonDynamoDBClient(new BasicAWSCredentials(key, secret), RegionEndpoint.USWest1), DefaultDbOperationConfig);
+
+                    return cloudwatchClient;
+                }
+                catch (Exception ex)
+                {
+                    if (ex.Message.Contains("The security token included in the request is invalid key"))
+                        throw new Exception(string.Format("The security token included in the request is invalid key {0}", key));
+                    throw;
+                }
+            }
+        }
 
         [SetUp]
         public void SetupPerTest()
         {
-            var removeTargets = _ddb.FromScan<ElmahError>(
+            var ddb = InitialiseClient();
+
+            var removeTargets = ddb.FromScan<ElmahError>(
                 new ScanOperationConfig(), DefaultDbOperationConfig).ToList();
-            var removeAllWrite = _ddb.CreateBatchWrite<ElmahError>(DefaultDbOperationConfig);
+            var removeAllWrite = ddb.CreateBatchWrite<ElmahError>(DefaultDbOperationConfig);
             removeAllWrite.AddDeleteItems(removeTargets);
-            _ddb.ExecuteBatchWrite(removeAllWrite);
+            ddb.ExecuteBatchWrite(removeAllWrite);
         }
 
         [Test]
@@ -79,10 +111,12 @@ namespace ShadowBlue.LogFarm.Repository.Test
         public void RepositoryAdd_VerifyAdd()
         {
             //arrange
+            var ddb = InitialiseClient();
+
             var container = new AutoMoq.AutoMoqer();
             var settingMock = container.GetMock<ISettings>();
 
-            container.SetInstance<IDynamoDBContext>(_ddb);
+            container.SetInstance<IDynamoDBContext>(ddb);
             settingMock.Setup(x => x.ApplicationName)
                 .Returns(Settings.Default.ApplicationName);
             settingMock.Setup(x => x.ElmahTableName)
@@ -102,7 +136,7 @@ namespace ShadowBlue.LogFarm.Repository.Test
             //act
             target.Add(error);
 
-            var results = _ddb.FromScan<ElmahError>(
+            var results = ddb.FromScan<ElmahError>(
                 new ScanOperationConfig(), DefaultDbOperationConfig).ToList();
 
             //assert
@@ -152,6 +186,8 @@ namespace ShadowBlue.LogFarm.Repository.Test
         public void RepositoryDelete_VerifyDelete()
         {
             //arrange
+            var ddb = InitialiseClient();
+
             var container = new AutoMoq.AutoMoqer();
             var settingMock = container.GetMock<ISettings>();
 
@@ -160,7 +196,7 @@ namespace ShadowBlue.LogFarm.Repository.Test
             settingMock.Setup(x => x.ElmahTableName)
                 .Returns(Settings.Default.ElmahTableName);
 
-            container.SetInstance<IDynamoDBContext>(_ddb);
+            container.SetInstance<IDynamoDBContext>(ddb);
             container.SetInstance("dummy");
 
             var target = container.Resolve<DynamoDbRepository<ElmahError>>();
@@ -172,12 +208,12 @@ namespace ShadowBlue.LogFarm.Repository.Test
                 .With(x => x.DateTimeId = fakeEpochId)
                 .Build();
 
-            _ddb.Save(error, DefaultDbOperationConfig);
+            ddb.Save(error, DefaultDbOperationConfig);
 
             //act
             target.Delete(fakeEpochId);
 
-            var results = _ddb.FromScan<ElmahError>(
+            var results = ddb.FromScan<ElmahError>(
                 new ScanOperationConfig(), DefaultDbOperationConfig).ToList();
 
             //assert
@@ -224,6 +260,8 @@ namespace ShadowBlue.LogFarm.Repository.Test
         public void RepositoryGet_VerifyGet()
         {
             //arrange
+            var ddb = InitialiseClient();
+
             var container = new AutoMoq.AutoMoqer();
             var settingMock = container.GetMock<ISettings>();
 
@@ -233,7 +271,7 @@ namespace ShadowBlue.LogFarm.Repository.Test
                 .Returns(Settings.Default.ElmahTableName);
 
             container.SetInstance("dummy");
-            container.SetInstance<IDynamoDBContext>(_ddb);
+            container.SetInstance<IDynamoDBContext>(ddb);
 
             var target = container.Resolve<DynamoDbRepository<ElmahError>>();
 
@@ -244,7 +282,7 @@ namespace ShadowBlue.LogFarm.Repository.Test
                 .With(x => x.DateTimeId = fakeEpochId)
                 .Build();
 
-            _ddb.Save(error, DefaultDbOperationConfig);
+            ddb.Save(error, DefaultDbOperationConfig);
 
             //act
             var result = target.Get(fakeEpochId);
@@ -289,6 +327,8 @@ namespace ShadowBlue.LogFarm.Repository.Test
         public void RepositoryGetAll_VerifyGetAll()
         {
             //arrange
+            var ddb = InitialiseClient();
+
             var container = new AutoMoq.AutoMoqer();
             var settingMock = container.GetMock<ISettings>();
 
@@ -296,7 +336,7 @@ namespace ShadowBlue.LogFarm.Repository.Test
                 .Returns(Settings.Default.ElmahTableName);
 
             container.SetInstance("dummy");
-            container.SetInstance<IDynamoDBContext>(_ddb);
+            container.SetInstance<IDynamoDBContext>(ddb);
 
             var target = container.Resolve<DynamoDbRepository<ElmahError>>();
 
@@ -307,7 +347,7 @@ namespace ShadowBlue.LogFarm.Repository.Test
 
             foreach (var error in errors)
             {
-                _ddb.Save(error, DefaultDbOperationConfig);
+                ddb.Save(error, DefaultDbOperationConfig);
             }
 
             //act
@@ -355,6 +395,8 @@ namespace ShadowBlue.LogFarm.Repository.Test
         public void RepositoryGetAllWithQuery_VerifyGetAllWithQuery()
         {
             //arrange
+            var ddb = InitialiseClient();
+
             var container = new AutoMoq.AutoMoqer();
             var settingMock = container.GetMock<ISettings>();
 
@@ -364,7 +406,7 @@ namespace ShadowBlue.LogFarm.Repository.Test
                 .Returns(Settings.Default.ElmahTableName);
 
             container.SetInstance("dummy");
-            container.SetInstance<IDynamoDBContext>(_ddb);
+            container.SetInstance<IDynamoDBContext>(ddb);
 
             var target = container.Resolve<DynamoDbRepository<ElmahError>>();
 
@@ -377,7 +419,7 @@ namespace ShadowBlue.LogFarm.Repository.Test
             foreach (var error in errors)
             {
                 error.DateTimeId = i + error.DateTimeId;
-                _ddb.Save(error, DefaultDbOperationConfig);
+                ddb.Save(error, DefaultDbOperationConfig);
 
                 i++;
             }
