@@ -43,7 +43,7 @@ namespace ShadowBlue.LogFarm.Domain.Test
 
                     return cloudwatchClient;
                 }
-                catch (AmazonCloudWatchLogsException)
+                catch (Exception)
                 {
                     throw new Exception(string.Format("The security token included in the request is invalid key {0}", key));
                 }         
