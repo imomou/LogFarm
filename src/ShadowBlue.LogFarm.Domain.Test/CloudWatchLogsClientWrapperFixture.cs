@@ -21,7 +21,7 @@ namespace ShadowBlue.LogFarm.Domain.Test
         private const string LogGroup = "Dev-LogFarm-NLogGroup-9V1QT6AKKOST";
         private const string Logstream = "NLogTestStream";
 
-        private AmazonCloudWatchLogsClient InitialiseClient()
+        public AmazonCloudWatchLogsClient InitialiseClient()
         {
             try
             {
@@ -36,9 +36,17 @@ namespace ShadowBlue.LogFarm.Domain.Test
                 var key = lines.First();
                 var secret = lines.ElementAt(1);
 
-                var cloudwatchClient = new AmazonCloudWatchLogsClient(new BasicAWSCredentials(key,secret), RegionEndpoint.USWest1);
+                try
+                {
+                    var cloudwatchClient = new AmazonCloudWatchLogsClient(new BasicAWSCredentials(key, secret),
+                        RegionEndpoint.USWest1);
 
-                return cloudwatchClient;
+                    return cloudwatchClient;
+                }
+                catch (AmazonCloudWatchLogsException)
+                {
+                    throw new Exception(string.Format("The security token included in the request is invalid key {0}", key));
+                }         
             }
         }
 
