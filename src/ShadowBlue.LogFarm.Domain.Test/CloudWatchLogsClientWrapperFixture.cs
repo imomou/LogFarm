@@ -41,6 +41,13 @@ namespace ShadowBlue.LogFarm.Domain.Test
                     var cloudwatchClient = new AmazonCloudWatchLogsClient(new BasicAWSCredentials(key, secret),
                         RegionEndpoint.USWest1);
 
+                    cloudwatchClient.DescribeLogStreams(
+                        new DescribeLogStreamsRequest
+                        {
+                            LogGroupName = LogGroup
+                        }
+                        );
+
                     return cloudwatchClient;
                 }
                 catch (Exception)
