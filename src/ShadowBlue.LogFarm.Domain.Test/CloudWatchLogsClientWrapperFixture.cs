@@ -33,8 +33,8 @@ namespace ShadowBlue.LogFarm.Domain.Test
             {
                 var lines = System.IO.File.ReadAllLines(@"..\..\..\TestArtifacts\credentials.dec");
 
-                var key = lines.First();
-                var secret = lines.ElementAt(1);
+                var key = lines.ElementAt(1);
+                var secret = lines.ElementAt(2);
 
                 try
                 {
