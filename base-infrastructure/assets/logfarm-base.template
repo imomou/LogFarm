@@ -12,29 +12,10 @@
          "Type":"String",
          "Default":"NLog"
       },
-      "IsSubscribed":{  
-         "Description":"Logevents to be delivered to AWS Kinesis Stream",
-         "Type":"String",
-         "AllowedValues":[  
-            "subscribe",
-            "unsubscribe"
-         ],
-         "Default":"unsubscribe"
-      },
       "ReadWriteCapacityUnits":{  
          "Description":"Name of Elmah table will be created in DynamoDb",
          "Type":"String",
          "Default":"1"
-      }
-   },
-   "Conditions":{  
-      "Subscribe":{  
-         "Fn::Equals":[  
-            {  
-               "Ref":"IsSubscribed"
-            },
-            "subscribe"
-         ]
       }
    },
    "Resources":{  
